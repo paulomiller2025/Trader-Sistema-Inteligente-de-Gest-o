@@ -1,0 +1,331 @@
+<!DOCTYPE html> 
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trader Pro - Gestão Inteligente</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #f0f0f0;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1, h2, h3 {
+      color: #00ff88;
+    }
+    input, select, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background-color: #00ff88;
+      color: #000;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #00cc66;
+    }
+    .section {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .sound {
+      display: none;
+    }
+    .btn-animado {
+      animation: pulse 1.5s infinite;
+      font-weight: bold;
+      box-shadow: 0 0 10px #00ff88;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 10px #00ff88; }
+      50% { transform: scale(1.05); box-shadow: 0 0 20px #00ff88; }
+      100% { transform: scale(1); box-shadow: 0 0 10px #00ff88; }
+    }
+    .result, .box {
+      background: #2a2a2a;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      color: #f0f0f0;
+    }
+    .cta-button {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 15px 25px;
+      background-color: #e67e22;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 18px;
+      animation: pulse 1.5s infinite;
+    }
+    .selector {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .selector button {
+      background-color: #3498db;
+      color: white;
+      padding: 15px 25px;
+      margin: 5px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .selector button:hover {
+      background-color: #2980b9;
+    }
+    .box {
+      display: none;
+    }
+
+    /* Estilo do novo Quiz */
+    .quiz-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+    }
+    .quiz-card {
+      flex: 1 1 300px;
+      background-color: #2a2a2a;
+      padding: 15px;
+      border-radius: 10px;
+      min-width: 280px;
+    }
+    .quiz-card h3 {
+      margin-bottom: 10px;
+      color: #00ff88;
+    }
+    .quiz-option {
+      background-color: #444;
+      border: none;
+      color: #f0f0f0;
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .quiz-option:hover {
+      background-color: #00cc66;
+    }
+    .quiz-option.active {
+      background-color: #00ff88;
+      color: #000;
+      font-weight: bold;
+    }
+    #quizForm button[type="button"] {
+      margin-top: 20px;
+      width: auto;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📘 Trader Pro - Sistema Inteligente de Educação e Gestão</h1>
+
+<div class="section">
+  <h2>🎰 Inserir Banca Inicial (USD)</h2>
+  <input type="number" id="banca" placeholder="Ex: 300">
+  <h2>🏁 Definir Meta Diária (%)</h2>
+  <select id="meta">
+    <option value="1">1%</option>
+    <option value="2">2%</option>
+    <option value="3">3%</option>
+    <option value="4">4%</option>
+    <option value="5">5%</option>
+  </select>
+  <h2>🛡 Definir Stop Loss (%)</h2>
+  <select id="stop">
+    <option value="10">10%</option>
+    <option value="15">15%</option>
+    <option value="20">20%</option>
+  </select>
+  <button onclick="calcularMetas(); playSound();">🔍 Calcular Metas</button>
+  <div id="result"></div>
+</div>
+
+<div class="section">
+  <h2>🎓 Mentoria VIP com Paulo Miller</h2>
+  <button class="btn-animado" onclick="confirmarMentoria(); playSound();">💌 Quero</button>
+  <p>Receba uma orientação passo a passo para obter lucros com bots automatizados na <strong>DERIV</strong> e <strong>Banka Milionária</strong>.</p>
+  <ul>
+    <li>💰 Valor: <strong>18.000 Kz</strong></li>
+    <li>🇦🇴 Kz: 18.000</li>
+    <li>🇺🇸 USD: Aproximadamente $20</li>
+    <li>🇧🇷 BRL: Aproximadamente R$ 110</li>
+    <li>🇲🇿 MZN: Aproximadamente MT 1.280</li>
+  </ul>
+  <p><strong>✔️ Garantia de conhecimento direto com resultados reais.</strong></p>
+  <p><strong>✔️ Exclusiva para quem deseja investir alto e lucrar alto.</strong></p>
+  <button onclick="window.open('https://bankamilionaria.trk.pro/', '_blank'); playSound();">🔐 Acessar a Plataforma de Trading Automático - Banka Milionária</button>
+  <button onclick="window.open('https://track.deriv.com/_IbwR-HIUYbJ8zg8lBvFoLmNd7ZgqdRLk/1/', '_blank'); playSound();">🔐 Cadastre-se na Corretora Deriv</button>
+  <button onclick="window.open('https://app.airtm.com/ivt/paulocal3u6fs2ml', '_blank'); playSound();">🔐 Cadastre-se na Airtm</button>
+  <button onclick="window.open('https://youtu.be/8DfjguSiJlk?si=o8Fg_yTLtXTTrCMv', '_blank'); playSound();">📰 Canal YouTube</button>
+</div>
+
+<div class="section">
+  <h2>📒 Dicas para Traders Iniciantes</h2>
+  <ul>
+    <li>✅ Use stop loss sempre.</li>
+    <li>⏳ Paciência é uma das maiores virtudes no trading.</li>
+    <li>📘 Foco no longo prazo: consistência é mais poderosa que velocidade.</li>
+    <li>🧐 Mantenha a disciplina e controle emocional.</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>🔮 Quiz: Qual tipo de Trader é você?</h2>
+  <form id="quizForm">
+    <div class="quiz-grid">
+      <div class="quiz-card" data-question="q1">
+        <h3>1️⃣ Como você lida com riscos no trading?</h3>
+        <button type="button" class="quiz-option" data-value="conservador">Evito riscos ao máximo</button>
+        <button type="button" class="quiz-option" data-value="moderado">Aceito algum risco com cuidado</button>
+        <button type="button" class="quiz-option" data-value="agressivo">Adoro altos riscos e altos lucros</button>
+      </div>
+
+      <div class="quiz-card" data-question="q2">
+        <h3>2️⃣ Qual o seu nível de experiência?</h3>
+        <button type="button" class="quiz-option" data-value="conservador">Sou iniciante</button>
+        <button type="button" class="quiz-option" data-value="moderado">Já conheço bem o básico</button>
+        <button type="button" class="quiz-option" data-value="agressivo">Tenho bastante experiência</button>
+      </div>
+
+      <div class="quiz-card" data-question="q3">
+        <h3>3️⃣ O que você busca nas operações?</h3>
+        <button type="button" class="quiz-option" data-value="conservador">Segurança e consistência</button>
+        <button type="button" class="quiz-option" data-value="moderado">Equilíbrio entre risco e retorno</button>
+        <button type="button" class="quiz-option" data-value="agressivo">Lucros altos e rápidos</button>
+      </div>
+    </div>
+    <button type="button" onclick="calcularResultado()">Ver meu Perfil de Trader</button>
+  </form>
+  <div id="resultado" class="result" style="display:none;"></div>
+</div>
+
+<div class="section">
+  <h2>📊 Banca Recomendada para Trading Automatizado</h2>
+  <div class="selector">
+    <button onclick="showBox('iniciante')">Trader Iniciante</button>
+    <button onclick="showBox('intermediario')">Trader com Experiência</button>
+    <button onclick="showBox('pro')">Trader Profissional</button>
+  </div>
+  <div id="iniciante" class="box">
+    <h3>✅ Trader Iniciante</h3>
+    <p>Objetivo: Aprender, testar, cometer erros sem grandes perdas.</p>
+    <p><strong>Banca:</strong> $50 a $200 USD</p>
+  </div>
+  <div id="intermediario" class="box">
+    <h3>✅ Trader com Experiência</h3>
+    <p>Objetivo: Já tem estratégia definida, busca consistência e crescimento.</p>
+    <p><strong>Banca:</strong> $300 a $800 USD</p>
+  </div>
+  <div id="pro" class="box">
+    <h3>✅ Trader Profissional</h3>
+    <p>Objetivo: Uso de bots e algoritmos — exige mais capital, disciplina e gestão.</p>
+    <p><strong>Banca:</strong> $1.000 a $3.000 USD ou mais</p>
+  </div>
+</div>
+
+<audio class="sound" id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+
+<script>
+function calcularMetas() {
+  let banca = parseFloat(document.getElementById("banca").value);
+  let meta = parseFloat(document.getElementById("meta").value);
+  let stop = parseFloat(document.getElementById("stop").value);
+  if (isNaN(banca) || banca <= 0) {
+    alert("Insira uma banca válida.");
+    return;
+  }
+  let diaria = (banca * meta / 100).toFixed(2);
+  let semanal = (diaria * 7).toFixed(2);
+  let mensal = (diaria * 30).toFixed(2);
+  let stopLoss = (banca * stop / 100).toFixed(2);
+  document.getElementById("result").innerHTML = `
+    <p>📅 Meta Diária: <strong>$${diaria}</strong></p>
+    <p>📆 Meta Semanal: <strong>$${semanal}</strong></p>
+    <p>📆 Meta Mensal: <strong>$${mensal}</strong></p>
+    <p>🛡 Stop Loss: <strong>$${stopLoss}</strong></p>
+    <p>⚠️ Menor meta = menor risco.</p>`;
+}
+
+function confirmarMentoria() {
+  const resposta = confirm("Está disponível a pagar pela mentoria VIP com Paulo Miller?");
+  if (resposta) {
+    window.open("https://wa.link/dceivc", "_blank");
+  } else {
+    alert("Pode voltar quando estiver preparado. Continuamos aqui para te apoiar.");
+  }
+}
+
+function playSound() {
+  document.getElementById("clickSound").play();
+}
+
+function calcularResultado() {
+  const respostas = { q1: null, q2: null, q3: null };
+  document.querySelectorAll(".quiz-card").forEach(card => {
+    const question = card.getAttribute("data-question");
+    const active = card.querySelector(".quiz-option.active");
+    if (active) respostas[question] = active.getAttribute("data-value");
+  });
+
+  if (!respostas.q1 || !respostas.q2 || !respostas.q3) {
+    alert("Por favor, responda todas as perguntas.");
+    return;
+  }
+
+  let perfil = { conservador: 0, moderado: 0, agressivo: 0 };
+  Object.values(respostas).forEach(val => perfil[val]++);
+  let tipo = perfil.agressivo >= 2 ? 'agressivo' : perfil.moderado >= 2 ? 'moderado' : 'conservador';
+
+  let mensagem = '';
+  if (tipo === 'conservador') {
+    mensagem = `<strong>Trader Conservador</strong><br>Prefere segurança e estabilidade.<br>Recomendado: Bot Genius, Trump V2, Thanos.`;
+  } else if (tipo === 'moderado') {
+    mensagem = `<strong>Trader Moderado</strong><br>Equilíbrio entre risco e retorno.<br>Recomendado: Bot Thanos, Genius, Trump V2.`;
+  } else {
+    mensagem = `<strong>Trader Agressivo</strong><br>Gosta de altos lucros e riscos.<br>Recomendado: Bot Sniper, Milionário.`;
+  }
+
+  const divResultado = document.getElementById("resultado");
+  divResultado.style.display = 'block';
+  divResultado.innerHTML = mensagem + `<br><a href="https://bankamilionaria.trk.pro" target="_blank" class="cta-button">🚀 Acesse a Banka Milionária</a>`;
+  divResultado.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function showBox(id) {
+  document.querySelectorAll('.box').forEach(box => box.style.display = 'none');
+  const box = document.getElementById(id);
+  if (box) {
+    box.style.display = 'block';
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+document.querySelectorAll('.quiz-option').forEach(button => {
+  button.addEventListener('click', () => {
+    const parent = button.parentElement;
+    parent.querySelectorAll('.quiz-option').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>
