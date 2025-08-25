@@ -1,377 +1,2103 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trader Pro - Gestão Inteligente</title>
-  <style>
-    body {
-      background-color: #121212;
-      color: #f0f0f0;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    h1, h2, h3 {
-      color: #00ff88;
-    }
-    input, select, button {
-      padding: 10px;
-      margin: 5px 0;
-      width: 100%;
-      border-radius: 5px;
-      border: none;
-      font-size: 16px;
-    }
-    button {
-      background-color: #00ff88;
-      color: #000;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background-color: #00cc66;
-    }
-    .section {
-      background-color: #1e1e1e;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-    .sound {
-      display: none;
-    }
-    .btn-animado {
-      animation: pulse 1.5s infinite;
-      font-weight: bold;
-      box-shadow: 0 0 10px #00ff88;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); box-shadow: 0 0 10px #00ff88; }
-      50% { transform: scale(1.05); box-shadow: 0 0 20px #00ff88; }
-      100% { transform: scale(1); box-shadow: 0 0 10px #00ff88; }
-    }
-    .result, .box {
-      background: #2a2a2a;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 15px;
-      color: #f0f0f0;
-    }
-    .cta-button {
-      display: inline-block;
-      margin-top: 25px;
-      padding: 15px 25px;
-      background-color: #e67e22;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 18px;
-      animation: pulse 1.5s infinite;
-    }
-    .selector {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    .selector button {
-      background-color: #3498db;
-      color: white;
-      padding: 15px 25px;
-      margin: 5px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .selector button:hover {
-      background-color: #2980b9;
-    }
-    .box {
-      display: none;
-    }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sora trading Bot</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0b1220;--card:#141c2e;--muted:#9fb0d0;--ok:#22c55e;--warn:#eab308;--err:#ef4444;
+  --primary:#2a62ff;--border:#263453;--panel:#0f1830;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:#e6edf7}
+header{padding:12px 16px;border-bottom:1px solid #25314d;background:#0d1628;position:sticky;top:0;z-index:8}
+.hflex{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.badge{display:none} /* ⇦ removido o que estava marcado com X */
+.online{display:flex;align-items:center;gap:6px;font-size:12px;color:#cfe8ff}
+.online i{width:8px;height:8px;background:#22c55e;border-radius:50%}
+.menu-wrap{position:relative}
+.menu-btn{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:#0f1830;color:#cfe8ff;cursor:pointer}
+.menu-list{position:absolute;right:0;top:40px;background:#0f1830;border:1px solid var(--border);border-radius:12px;min-width:220px;display:none;box-shadow:0 6px 18px rgba(0,0,0,.35);z-index:20}
+.menu-list a{display:block;padding:12px;color:#cfe8ff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.06)}
+.menu-list a:last-child{border-bottom:none}
+.menu-wrap.open .menu-list{display:block}
 
-    .quiz-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: space-between;
-    }
-    .quiz-card {
-      flex: 1 1 300px;
-      background-color: #2a2a2a;
-      padding: 15px;
-      border-radius: 10px;
-      min-width: 280px;
-    }
-    .quiz-card h3 {
-      margin-bottom: 10px;
-      color: #00ff88;
-    }
-    .quiz-option {
-      background-color: #444;
-      border: none;
-      color: #f0f0f0;
-      padding: 10px;
-      margin: 5px 0;
-      width: 100%;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .quiz-option:hover {
-      background-color: #00cc66;
-    }
-    .quiz-option.active {
-      background-color: #00ff88;
-      color: #000;
-      font-weight: bold;
-    }
-    #quizForm button[type="button"] {
-      margin-top: 20px;
-      width: auto;
-    }
-  </style>
+.rightbar{
+  display:flex; align-items:center; gap:10px; /* botão + menu lado a lado */
+}
+.aff-btn{
+  padding:8px 12px; border-radius:10px;
+  background:#c1121f; /* vermelho */
+  color:#fff;         /* texto branco */
+  border:1px solid var(--border);
+  text-decoration:none; white-space:nowrap; font-weight:600;
+}
+.aff-btn:hover{ opacity:.9; }
+
+main{max-width:1200px;margin:14px auto 90px;padding:0 12px}
+.grid{display:grid;gap:14px}
+@media(min-width:980px){.grid{grid-template-columns:1.05fr 1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
+input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid #2a3a5e;background:#0f1830;color:#e6edf7}
+button{cursor:pointer;transition:transform .05s ease,opacity .05s ease}
+button:active{transform:scale(.98);opacity:.92}
+.primary{background:var(--primary);border-color:var(--primary)}
+.danger{background:#9b2226;border-color:#9b2226}
+.muted{color:var(--muted)} .sm{font-size:12px}
+
+.pill{padding:10px 12px;border-radius:12px;background:var(--panel);border:1px solid #25314d;min-width:140px}
+.pill b{display:block}
+.kpi{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+
+.metric{display:inline-flex;align-items:center;gap:10px;background:#0f1830;border:1px solid #2a3a5e;border-radius:12px;padding:10px 14px;font-size:14px;min-width:180px}
+.metric b{font-size:18px;color:#fff}
+
+.log{max-height:240px;overflow:auto;background:#08101b;border-radius:10px;border:1px solid #223052;padding:10px;font-family:ui-monospace,Menlo,Consolas}
+.history-headers,.history-row{display:flex;gap:10px;align-items:center;padding:6px 8px}
+.history-headers{border-bottom:1px solid rgba(255,255,255,.06);font-weight:700}
+.h-time{width:74px}.h-strat{width:140px}.h-tick{width:72px}.h-price{width:86px;text-align:right}.h-result{width:96px;text-align:right}
+
+.progress-wrap{margin:8px 0;padding:10px;border-radius:10px;background:rgba(255,255,255,.02)}
+.prog-steps{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.step{flex:1;text-align:center;padding:8px;border-radius:8px;background:rgba(255,255,255,.04);color:#9fb0d0}
+.connector{height:6px;flex:1;background:rgba(255,255,255,.06);border-radius:6px}
+.step.active{background:linear-gradient(90deg,#6b46c1,#9f7aea);color:#fff;box-shadow:0 6px 18px rgba(103,71,179,.22)}
+
+canvas{display:block;width:100%;height:240px;border-radius:10px;background:#0b1524;margin-top:10px}
+
+/* botões maiores */
+.btn-icon{width:58px;height:58px;border-radius:14px;border:2px solid #2a3a5e;background:#0f1830;display:flex;align-items:center;justify-content:center}
+.btn-icon svg{width:26px;height:26px;fill:#cfe8ff}
+.btn-icon.play{border-color:#1ea84a}
+.btn-icon.stop{border-color:#d4423a}
+.btn-mini{padding:8px 12px;font-size:12px}
+
+	/* Logo no cabeçalho, ao lado do título */
+.brand{ display:flex; align-items:center; gap:8px; }
+.brand img{ height:22px; width:auto; display:block; } /* altura pequena, mesma linha */
+
+/* escondidos (pedidos) */
+.hide-sma{display:none!important}   /* SMA(5)/SMA(20) ocultos */
+
+/* toolbar acima do gráfico (desktop) */
+.chart-toolbar{display:flex;gap:10px;align-items:center;justify-content:flex-start;flex-wrap:wrap;margin-top:6px}
+.sound-toggle{width:auto}
+
+/* ordem desktop */
+@media(min-width:980px){
+  .desktop-grid{display:grid;grid-template-columns:1fr;gap:10px}
+  .progress-first{order:1}
+  .history-second{order:2}
+}
+	
+/* Botão flutuante WhatsApp */
+.whatsapp-fab{
+  position:fixed; right:16px;
+  /* acima do rodapé fixo: ajuste se quiser */
+  bottom:calc(84px + env(safe-area-inset-bottom));
+  width:58px; height:58px; border-radius:50%;
+  background:#25d366; color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  border:1px solid #1fa855; z-index:1000;
+  transition:transform .12s ease, opacity .12s ease;
+}
+.whatsapp-fab:hover{ transform:translateY(-1px); opacity:.95; }
+.whatsapp-fab svg{ width:30px; height:30px; fill:currentColor; }
+	
+/* mobile */
+@media(max-width:979px){
+  .mobile-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+}
+
+.footer{position:fixed;left:0;right:0;bottom:0;background:#0d1628;border-top:1px solid #25314d}
+#footer-warning{display:block;max-height:0;overflow:hidden;transition:max-height .8s ease,padding .8s ease;padding:0 10px;font-size:12px;line-height:1.3}
+#footer-warning.show{max-height:200px;padding:10px}
+
+	/* Cabeçalho em 3 colunas: esquerda | centro | direita */
+header{
+  display:grid;
+  grid-template-columns: 1fr auto 1fr; /* lados flexíveis, centro no meio real */
+  align-items:center;
+  gap:12px;
+}
+
+/* esquerda (título/SORA) */
+.hflex{
+  justify-self:start;
+  display:flex; align-items:center; gap:8px;
+}
+
+/* centro (contador online) */
+header .online{
+  justify-self:center;                 /* <<< centraliza no grid */
+  display:flex; align-items:center; gap:6px;
+  white-space:nowrap; font-size:12px; color:#cfe8ff;
+}
+header .online i{
+  width:8px;height:8px;border-radius:50%;
+  background:#22c55e; box-shadow:0 0 6px #22c55e;
+}
+
+/* direita (botão + menu) */
+header .rightbar{
+  justify-self:end;                    /* <<< fica colado à direita */
+  display:flex; align-items:center; gap:12px; flex-wrap:nowrap;
+}
+
+/* garante que regras antigas de float/flex não baguncem */
+header *{ float:none !important; }
+	
+	/* Tipografia igual aos botões padrão (Autorizar & Conectar) */
+.aff-btn{
+  font-family: inherit;   /* mesma família do site/botões */
+  font-size: 14px;        /* mesmo tamanho usado nos botões */
+  font-weight: 600;       /* peso forte como o botão */
+  line-height: 1;         /* texto mais “compacto” */
+  letter-spacing: .2px;   /* leve ajuste como nos botões */
+}
+
+	/* WhatsApp “encostado” no rodapé */
+.whatsapp-fab{
+  bottom: 16px !important;  /* ajuste fino: 12–24px conforme seu gosto */
+}
+
+/* Se no mobile quiser um pouquinho mais alto, para não colar demais: */
+@media (max-width: 600px){
+  .whatsapp-fab{ bottom: 22px !important; }
+}
+
+/* ======== CORREÇÃO DE RESPONSIVIDADE ======== */
+
+/* Volta ao comportamento compacto no mobile */
+@media (max-width: 979px) {
+  main.grid {
+    display: block;  /* em vez de 2 colunas, fica 1 só */
+  }
+
+  .card {
+    margin-bottom: 14px; /* espaçamento entre cards */
+  }
+
+  /* Botões Comprar RISE/FALL ficam logo visíveis embaixo do gráfico */
+  .mobile-actions {
+    display: flex !important;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .mobile-actions button {
+    flex: 1;
+  }
+}
+
+/* Ajusta AI Tools para não “alongar” demais */
+.ai-tools-panel {
+  max-height: none !important;
+  margin-bottom: 10px;
+}
+</style>
+
+<style>
+  /* Ajusta a linha "Operações" dentro da pílula de Lucro/Prejuízo */
+  #operations_count {
+    display: inline-block;       /* mantém lado a lado com o valor */
+    font-size: 11px !important;  /* diminui só essa linha */
+    color: #9fb0d0;              /* mantém estilo "muted" */
+    margin-left: 6px;            /* pequeno espaço depois do valor */
+    white-space: nowrap;         /* impede quebra de linha */
+  }
+  /* garante que Lucro/Prejuízo e Operações fiquem juntos */
+  .pill span#pl_session {
+    display: inline-block;
+  }
+</style>
+
 </head>
 <body>
-
-<h1>📘 Trader Pro - Sistema Inteligente de Educação e Gestão</h1>
-
-<div class="section">
-  <h2>🎰 Inserir Banca Inicial (USD)</h2>
-  <input type="number" id="banca" placeholder="Ex: 300">
-  <h2>🏁 Definir Meta Diária (%)</h2>
-  <select id="meta">
-    <option value="1">1%</option>
-    <option value="2">2%</option>
-    <option value="3">3%</option>
-    <option value="4">4%</option>
-    <option value="5">5%</option>
-  </select>
-  <h2>🛡 Definir Stop Loss (%)</h2>
-  <select id="stop">
-    <option value="10">10%</option>
-    <option value="15">15%</option>
-    <option value="20">20%</option>
-  </select>
-  <button onclick="calcularMetas(); playSound();">🔍 Calcular Metas</button>
-  <div id="result"></div>
+<header>
+  <div class="hflex">
+    <h3 style="margin:0">SORA</h3>
 </div>
-
-<div class="section">
-  <h2>🎓 Treinamento Completo com Paulo Miller - Gratuito</h2>
-  <button class="btn-animado" onclick="confirmarMentoria(); playSound();">💌 Quero</button>
-  <p>Receba uma orientação passo a passo para aprender a operar com consistencia com disciplina e responsabilidade na <strong>DERIV</strong> e <strong>Banka Milionária</strong>.</p>
-  <ul>
-    <li>💰 Valor: <strong>Gratuito</strong></li>
-    <li>🇦🇴 Kz: 0.000</li>
-    <li>🇺🇸 USD: Aproximadamente $0</li>
-    <li>🇧🇷 BRL: Aproximadamente R$ 0</li>
-    <li>🇲🇿 MZN: Aproximadamente MT 0</li>
-  </ul>
-  <p><strong>✔️ Obs: O Treinamento é adequado para iniciantes ou pessoas ja experientes que desejam aprimorar ou aprender do Zero as operações automatizadas da Corretora Deriv atráves da Plataforma Banka Milionária.</strong></p>
-  <p><strong>🔒 Exclusiva para quem deseja compreender operações e buscar estratégias de crescimento financeiro com responsabilidade.</strong></p>
-  <button onclick="window.open('https://bankamilionaria.trk.pro/', '_blank'); playSound();">🔐 Acessar a Plataforma de Trading Automático - Banka Milionária</button>
-  <button onclick="window.open('https://track.deriv.com/_IbwR-HIUYbJ8zg8lBvFoLmNd7ZgqdRLk/1/', '_blank'); playSound();">🔐 Cadastre-se na Corretora Deriv</button>
-  <button onclick="window.open('https://app.airtm.com/ivt/paulocal3u6fs2ml', '_blank'); playSound();">🔐 Cadastre-se na Airtm</button>
-  <button onclick="window.open('https://youtu.be/8DfjguSiJlk?si=o8Fg_yTLtXTTrCMv', '_blank'); playSound();">📰 Canal YouTube</button>
-</div>
-
-<div class="section">
-  <h2>📒 Dicas para Traders Iniciantes</h2>
-  <ul>
-    <li>✅ Use stop loss sempre.</li>
-    <li>⏳ Paciência é uma das maiores virtudes no trading.</li>
-    <li>📘 Foco no longo prazo: consistência é mais poderosa que velocidade.</li>
-    <li>🧐 Mantenha a disciplina e controle emocional.</li>
-  </ul>
-</div>
-
-<div class="section">
-  <h2>🔮 Quiz: Qual tipo de Trader é você?</h2>
-  <form id="quizForm">
-    <div class="quiz-grid">
-      <div class="quiz-card" data-question="q1">
-        <h3>1️⃣ Como você lida com riscos no trading?</h3>
-        <button type="button" class="quiz-option" data-value="conservador">Evito riscos ao máximo</button>
-        <button type="button" class="quiz-option" data-value="moderado">Aceito algum risco com cuidado</button>
-        <button type="button" class="quiz-option" data-value="agressivo">Adoro altos riscos e altos lucros</button>
-      </div>
-
-      <div class="quiz-card" data-question="q2">
-        <h3>2️⃣ Qual o seu nível de experiência?</h3>
-        <button type="button" class="quiz-option" data-value="conservador">Sou iniciante</button>
-        <button type="button" class="quiz-option" data-value="moderado">Já conheço bem o básico</button>
-        <button type="button" class="quiz-option" data-value="agressivo">Tenho bastante experiência</button>
-      </div>
-
-      <div class="quiz-card" data-question="q3">
-        <h3>3️⃣ O que você busca nas operações?</h3>
-        <button type="button" class="quiz-option" data-value="conservador">Segurança e consistência</button>
-        <button type="button" class="quiz-option" data-value="moderado">Equilíbrio entre risco e retorno</button>
-        <button type="button" class="quiz-option" data-value="agressivo">Lucros altos e rápidos</button>
+    <div class="online"><i></i> <span id="online_count">—</span> online</div>
+	<div class="rightbar">
+  <a class="aff-btn danger"
+     href="https://track.deriv.com/_IbwR-HIUYbJ8zg8lBvFoLmNd7ZgqdRLk/1/"
+     target="_blank" rel="noopener">
+    Cadastra-se na Corretora
+  </a>
+    <div class="menu-wrap" id="menu_wrap">
+      <button class="menu-btn" id="btn_menu">Menu ▾</button>
+      <div class="menu-list">
+        <a href="#" id="menu_training">Treinamento</a>
+        <a href="#" id="menu_terms">Termos e Condições</a>
+		<a href="#" id="menu_bank">Gerenciamento de Banca</a>
+		<a href="#" id="menu_rank">Ranking dos Traders - Hoje</a>
       </div>
     </div>
-    <button type="button" onclick="calcularResultado()">Ver meu Perfil de Trader</button>
-  </form>
-  <div id="resultado" class="result" style="display:none;"></div>
+  </div>
+</header>
+
+<main class="grid">
+  <!-- COLUNA ESQUERDA -->
+  <section class="card">
+    <h4>Conexão</h4>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div>
+        <label>Login com Deriv (OAuth)</label>
+        <button id="btn_connect" class="primary">Autorizar & Conectar</button>
+      </div>
+      <div>
+        <label>Tipo de Conta</label>
+        <select id="account_select" title="Selecione uma conta" disabled></select>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+      <button id="btn_disconnect" class="danger">Desconectar</button>
+      <div style="display:none">
+        <select id="env_select"><option value="demo" selected>Demo</option><option value="real">Real</option></select>
+      </div>
+    </div>
+
+    <div class="kpi">
+      <div class="pill"><b>Tipo de Conta</b><span id="account_info" class="muted">—</span></div>
+      <div class="pill"><b>Saldo</b><span id="balance">—</span></div>
+      <div class="pill"><b>Lucro/Prejuízo</b><span id="pl_session">$0.00</span><div id="operations_count" class="muted">Operações 0 / 0</div></div>
+      <div class="pill hide-sma"><b>Aberta?</b><span id="open_status">—</span></div>
+    </div>
+
+    <!-- Toolbar do gráfico (metric retangulares maiores) -->
+    <div class="chart-toolbar">
+      <button id="btn_sound_toggle" class="btn-mini sound-toggle">🔔 Som</button>
+      <div class="metric">Último Dígito: <b id="last_digit">—</b></div>
+      <div class="metric">Último Preço: <b id="last_tick">—</b></div>
+      <button id="btn_reset_history" class="btn-mini">Reset Histórico</button>
+      <!-- ADIÇÃO: botão de alternância do gráfico -->
+      <button id="btn_chart_toggle" class="btn-mini" title="Alternar gráfico dígitos/tendência">Ver Tendência</button>
+    </div>
+
+    <canvas id="main_chart"></canvas>
+
+    <div class="mobile-actions" style="margin-top:10px">
+      <button id="btn_buy_call">Comprar RISE (CALL)</button>
+      <button id="btn_buy_put">Comprar FALL (PUT)</button>
+    </div>
+  </section>
+
+  <!-- COLUNA DIREITA -->
+  <section class="card desktop-grid">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div style="display:flex;gap:10px">
+        <button id="btn_config" class="btn-icon" title="Configurações">
+          <svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9.4 4a7.5 7.5 0 00-.2-1.8l2-1.6-2-3.4-2.4.9a7.7 7.7 0 00-1.6-.9l-.4-2.6H9.2l-.4 2.6a7.7 7.7 0 00-1.6.9l-2.4-.9-2 3.4 2 1.6A7.5 7.5 0 003 12c0 .6.1 1.2.2 1.8l-2 1.6 2 3.4 2.4-.9c.5.4 1 .7 1.6.9l.4 2.6h5.6l.4-2.6c.6-.2 1.1-.5 1.6-.9l2.4.9 2-3.4-2-1.6c.1-.6.2-1.2.2-1.8z"/></svg>
+        </button>
+        <button id="btn_auto" class="btn-icon play" title="Iniciar/Parar Auto">
+          <svg id="icon_play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <svg id="icon_stop" viewBox="0 0 24 24" style="display:none"><path d="M6 6h12v12H6z"/></svg>
+        </button>
+        <!-- (o botão Robô será inserido aqui via JS, sem modificar seu HTML) -->
+      </div>
+      <span class="muted sm hide-sma">SMA(5)/SMA(20) ocultos</span>
+    </div>
+
+    <!-- Parâmetros (drawer) -->
+    <div id="config_drawer" style="display:none;margin-top:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <label>Ativo</label>
+          <select id="symbol">
+            <option value="R_10">Volatility 10</option>
+            <option value="R_25">Volatility 25</option>
+            <option value="R_50" selected>Volatility 50</option>
+            <option value="R_75">Volatility 75</option>
+            <option value="R_100">Volatility 100</option>
+          </select>
+        </div>
+        <div>
+          <label>Moeda</label>
+          <select id="currency">
+            <option value="USD" selected>USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Estratégia</label>
+          <select id="strategy">
+            <option value="digit_even" selected>Dígitos: Even</option>
+            <option value="digit_odd">Dígitos: Odd</option>
+            <option value="digit_over">Dígitos: Over</option>
+            <option value="digit_under">Dígitos: Under</option>
+            <option value="digit_matches">Digit Matches</option>
+            <option value="digit_differs">Digit Differs</option>
+            <option value="sma">SMA Cross (Rise/Fall)</option>
+            <option value="manual">Manual (Rise/Fall)</option>
+          </select>
+        </div>
+        <div>
+          <label>Stake (Entrada)</label>
+          <input id="stake" type="number" step="0.01" value="1.00"/>
+        </div>
+
+        <div>
+          <label>Multiplicador Martingale (2^n)</label>
+          <input id="martingale_level" type="number" min="0" value="0"/>
+        </div>
+        <div>
+          <label>Perdas seguidas (Mg)</label>
+          <input id="mg_losses" type="number" min="0" value="0"/>
+        </div>
+
+        <div>
+          <label>Duração</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <input id="duration" type="number" value="1"/>
+            <select id="duration_unit">
+              <option value="t" selected>Ticks</option>
+              <option value="m">Minutos</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="digit_box" style="display:none">
+          <label>Previsão (0–9 p/ Over/Under/Matches/Differs)</label>
+          <input id="digit_threshold" type="number" min="0" max="9" value="4"/>
+        </div>
+
+        <div>
+          <label>Meta de Lucro-Profit (fecha após atingir)</label>
+          <input id="tp_session" type="number" step="0.01" value="10"/>
+        </div>
+        <div>
+          <label>Limite de Perda-Stop (fecha após atingir)</label>
+          <input id="sl_session" type="number" step="0.01" value="-10"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de progresso e histórico -->
+    <div class="progress-first">
+      <label>Operação Ativa</label>
+      <div class="progress-wrap">
+        <div class="prog-steps" id="prog_steps">
+          <div class="step" id="step_analyzing">Analisando</div>
+          <div class="connector"></div>
+          <div class="step" id="step_open">Contrato Aberto</div>
+          <div class="connector"></div>
+          <div class="step" id="step_closed">Fechado</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-second">
+      <label>Histórico de Transações</label>
+      <div class="history-headers">
+        <span class="h-time">Hora</span>
+        <span class="h-strat">Estratégia</span>
+        <span class="h-tick">Tick Final</span>
+        <span class="h-price">Preço</span>
+        <span class="h-result">Resultado</span>
+      </div>
+      <div id="log" class="log"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <span id="footer-warning" class="muted show">！Os Produtos oferecido em Deriv.com incluem opções binárias, contratos ("CFDs") complexos e apresentam riscos de perder dinheiro devido a alavancagem, considere compreender como funcionam os CFDs e se pode correr o risco de perder o seu dinheiro.</span>
+
+	
+</footer>
+
+<!-- Modais enxutos -->
+<div id="modal_training" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;align-items:center;justify-content:center">
+  <div class="card" style="max-width:960px;width:92%;max-height:86vh;overflow:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="margin:0">Treinamento</h3>
+      <button id="close_training" class="btn-mini">Fechar</button>
+    </div>
+    <p class="muted">Vídeo <code>Aulas</code> da Plataforma. <!-- LOCALIZE POR ESTE COMENTÁRIO --></p>
+    <div class="card" style="background:#0b1524">
+      <b>Aula 1 — Introdução</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/S9fhKZJIMPk" allowfullscreen></iframe></div>
+	  
+	  <b>Aula 2 — Como funciona a Plataforma SORA</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/pD3_J6eSSD8" allowfullscreen></iframe></div>
+	  
+	  <b>Aula 3 — Como Criar Conta na Deriv</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/f4dnqBU6mV8" allowfullscreen></iframe></div>
+	  
+	  <b>Aula 4 — Como Criar Conta na Airtm</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/YY8jj72503Q" allowfullscreen></iframe></div>
+	  
+	  <b>Aula 5 — Como Depositar na Airtm</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/kbhzyDpP-C0" allowfullscreen></iframe></div>
+	  
+	  <b>Aula 6 — Como Depositar na Deriv através da Airtm</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/nn8IMxsv86Q" allowfullscreen></iframe></div>
+	  
+	  <b>Aula 7 — Como Depositar Criptomoeda na Deriv através da Binance</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/gaMgIZipuPY" allowfullscreen></iframe></div>
+	  
+	  <b>Aula 8 — Estratégia Dígitos Even</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/Ir2m_5PXR5o" allowfullscreen></iframe></div>
+	  
+	  <b>Aula 9 — Estratégia Dígitos Odd</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/P9YJ74upIMo" allowfullscreen></iframe></div>
+	  
+	  <b>Aula 10 — Estratégia Dígitos Over / Under</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/1OHnHNo2_f0" allowfullscreen></iframe></div>
+	  
+	  <b>Aula 11 — Estratégia Dígitos Matches / Differs</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/yRniYu0tB20" allowfullscreen></iframe></div>
+	  
+	  <b>Aula 12 — Estratégia Rise / Fall - Automático(IA) e Manual</b>
+      <div style="position:relative;padding-top:56.25%"><iframe style="position:absolute;inset:0;width:100%;height:100%;border:0" src="https://www.youtube.com/embed/7QXxFZlIOW0" allowfullscreen></iframe></div>
+	  	  
+    </div>
+  </div>
 </div>
 
-<div class="section">
-  <h2>📊 Banca Recomendada para Trading Automatizado</h2>
-  <div class="selector">
-    <button onclick="showBox('iniciante')">Trader Iniciante</button>
-    <button onclick="showBox('intermediario')">Trader com Experiência</button>
-    <button onclick="showBox('pro')">Trader Profissional</button>
-  </div>
-  <div id="iniciante" class="box">
-    <h3>✅ Trader Iniciante</h3>
-    <p>Objetivo: Aprender, testar, cometer erros sem grandes perdas.</p>
-    <p><strong>Banca:</strong> $100 a $300 USD</p>
-  </div>
-  <div id="intermediario" class="box">
-    <h3>✅ Trader com Experiência</h3>
-    <p>Objetivo: Já tem estratégia definida, busca consistência e crescimento.</p>
-    <p><strong>Banca:</strong> $400 a $800 USD</p>
-  </div>
-  <div id="pro" class="box">
-    <h3>✅ Trader Profissional</h3>
-    <p>Objetivo: Uso de bots e algoritmos — exige mais capital, disciplina e gestão.</p>
-    <p><strong>Banca:</strong> $1.000 a $3.000 USD ou mais</p>
+<div id="modal_terms" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;align-items:center;justify-content:center">
+  <div class="card" style="max-width:980px;width:92%;max-height:86vh;overflow:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="margin:0">Termos e Condições</h3>
+      <button id="close_terms" class="btn-mini">Fechar</button>
+    </div>
+    <div style="white-space:pre-wrap;font-size:13px;line-height:1.45;color:#cfe8ff;margin-top:8px">
+Termos de Uso e Riscos — Sora
+
+1) Natureza do serviço
+
+ A Sora é uma ferramenta de visualização, automação e estudo de estratégias. Não é corretora, não intermedia ordens, não guarda valores, não faz gestão de conta e não presta aconselhamento financeiro.
+ A conexão com plataformas de terceiros (ex.: Deriv) é iniciada e autorizada pelo próprio utilizador. Qualquer ordem, depósito, saque, cadastro ou aceite de termos é feito diretamente com o terceiro, fora da Sora.
+ O acesso à Sora é direto e sem cadastro. Não solicitamos criação de conta na Sora.
+
+2) Aviso de risco (Deriv & derivados)
+
+ A Deriv oferece derivativos complexos (ex.: opções e CFDs) que podem não ser adequados a todos e podem resultar na perda total do capital.
+ Se houver conversão cambial, as taxas de câmbio impactam lucros e perdas.
+ Nunca opere com dinheiro emprestado ou que não possa perder. Ao usar a Sora, você declara que compreende integralmente esses riscos.
+
+3) Isenções e limitações de responsabilidade
+
+ A Sora **não garante resultados nem disponibilidade ininterrupta do serviço e não responde por decisões de investimento, perdas financeiras, perda de dados, indisponibilidade, falhas de terceiros, lucros cessantes ou quaisquer danos indiretos, especiais, punitivos ou consequenciais, na máxima medida permitida pela lei aplicável** (República de Angola e normas internacionais de ordem pública).
+ Indicadores visuais, como contagem de “utilizadores online”, podem ser estimados/aleatórios e servem apenas para efeito informativo.
+ O serviço é fornecido “tal como está” e “conforme disponível”, sem garantias expressas ou implícitas.
+
+4) Responsabilidade do utilizador
+
+ Você é exclusivamente responsável por: (i) escolher ativos/estratégias, (ii) configurar e acionar qualquer automação, (iii) cumprir as leis e regulamentos do seu país (incluindo regras cambiais, fiscais, PLD/FT e de proteção de dados), (iv) proteger suas credenciais nas plataformas de terceiros (recomendamos 2FA).
+ Uso permitido somente para maiores de 18 anos. É vedado o uso ilícito, abusivo, difamatório, fraudulento, engenharia reversa, scraping, spam, tentativa de intrusão e quaisquer atos que prejudiquem o serviço ou terceiros.
+ Você concorda em indemnizar a Sora por reclamações de terceiros decorrentes do seu uso indevido do serviço.
+
+5) Terceiros e links
+
+ A Sora pode exibir links, APIs, widgets e conteúdos de terceiros. Não controlamos nem garantimos exatidão, disponibilidade ou segurança desses conteúdos. O uso é por sua conta e risco.
+
+6) Privacidade e cookies (sem cadastro)
+
+ Como o acesso é direto, não criamos perfis de utilizador. Podemos processar dados técnicos mínimos (p. ex., IP encurtado, logs antifraude e métricas de desempenho) e cookies essenciais/analíticos para funcionamento e melhoria do serviço.
+ Não solicitamos dados sensíveis. Não vendemos dados. Podemos conservar e partilhar informações se exigido por lei ou autoridade competente (Angola ou internacional), para prevenir fraude, cumprir ordens legais ou proteger direitos.
+ Você pode gerir cookies no seu navegador; desativá-los pode limitar funcionalidades.
+
+7) Propriedade intelectual
+
+ “Sora”, interface, design, textos, imagens e código são propriedade intelectual da Sora ou licenciantes. É proibido copiar, distribuir, modificar, criar obras derivadas ou usar marcas sem autorização escrita.
+
+8) Alterações e aceitação
+
+Estes Termos podem ser atualizados a qualquer momento**. O uso continuado após a publicação das alterações significa aceitação integral.
+Se não concordar, não utilize a Sora.
+
+9) Lei aplicável e jurisdição
+
+ Estes Termos regem-se, primordialmente, pelas leis da República de Angola (incluindo normas de proteção de dados e PLD/FT), sem prejuízo de normas imperativas internacionais aplicáveis.
+ Foro exclusivo: Luanda, Angola, salvo quando a lei imperativa determinar foro diverso.
+
+10) Contacto
+
+ Dúvidas ou notificações legais: utilize o canal de suporte indicado na própria plataforma.
+    </div>
   </div>
 </div>
 
-<!-- NOVA SEÇÃO ADICIONADA -->
-<div class="section">
-  <h2>🛡 Qual é o meu valor de Entrada(Stake) ?</h2>
-  <p>Digite o valor da sua banca para descobrir o seu valor de aposta(Stake) segura e recomendada:</p>
-  <input type="number" id="bancaSegura" placeholder="Digite o valor da banca em USD">
-  <button onclick="calcularStake()">Calcular Stake</button>
-  <div class="result" id="resultadoStake"></div>
+<!-- ========== MODAL: GERENCIAMENTO DE BANCA ========== -->
+<div id="modal_bank" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;align-items:center;justify-content:center">
+  <div class="card" style="max-width:980px;width:92%;max-height:86vh;overflow:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <h3 style="margin:0">Gerenciamento de Banca</h3>
+      <button id="close_bank" class="btn-mini">Fechar</button>
+    </div>
 
-  <h3>📌 Observações Importantes:</h3>
-  <ul>
-    <li>Aprenda sobre gerenciamente <strong>, respeite o seu plano</strong> e tenha sempre uma Meta diaria estabelecida respeitando a sua banca.</li>
-    <li>Faça no máximo <strong>3 a 5 entradas por dia ou conforme a sua banca</strong>.</li>
-    <li>Quando atingir a meta, <strong>saia do mercado e volte num outro periodo do dia ou mesmo no dia seguinte</strong>.</li>
-    <li>Use sempre <strong>stop loss</strong>.</li>
-    <li>Não apliques metas altas com banca Baixa, Banca baixa opere com metas curtas e baixas<strong>.</strong>.</li>
-  </ul>
+    <!-- Formulário -->
+    <div class="card" style="margin-top:10px;background:#0b1524;border-color:#223052">
+      <form id="bank_form" onsubmit="return false" style="display:grid;gap:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <label>Valor da banca (USD)</label>
+            <input id="bank_amount" type="number" min="1" step="0.01" value="100"/>
+          </div>
+          <div>
+            <label>Perfil de risco</label>
+            <select id="risk_select">
+              <option value="conservative" selected>Conservador</option>
+              <option value="moderate">Moderado</option>
+              <option value="aggressive">Agressivo</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div>
+            <label>Taxa de acerto esperada (%)</label>
+            <input id="exp_winrate" type="number" min="30" max="90" step="1" value="55"/>
+          </div>
+          <div>
+            <label>Retorno:Risco)</label>
+            <input id="rr_ratio" type="number" min="0.5" step="0.1" value="0.95"/>
+          </div>
+          <div>
+            <label>Dias p/ projeção</label>
+            <input id="days_proj" type="number" min="1" step="1" value="7"/>
+          </div>
+        </div>
+
+        <div class="muted sm">
+          Dica: Win-rate 50–60% e R:R ~0.95 simulam dígitos (Even/Odd). Ajuste conforme sua realidade.
+        </div>
+      </form>
+    </div>
+
+    <!-- Recomendações calculadas -->
+    <div class="card" style="margin-top:10px">
+      <h4 style="margin:0 0 6px">Plano recomendado</h4>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+        <div class="pill"><b>Stake por operação</b><span id="out_stake">—</span></div>
+        <div class="pill"><b>Meta diária (TP)</b><span id="out_tp">—</span></div>
+        <div class="pill"><b>Stop diário (SL)</b><span id="out_sl">—</span></div>
+      </div>
+
+      <div class="kpi" style="margin-top:10px">
+        <div class="pill"><b>Máx. perdas seguidas (s/ MG)</b><span id="out_max_losses">—</span></div>
+        <div class="pill"><b>Entradas sugeridas/dia</b><span id="out_trades_day">—</span></div>
+        <div class="pill"><b>Estrategia</b><span id="out_strategy">Dígitos: Even / Odd</span></div>
+      </div>
+    </div>
+
+    <!-- Projeções -->
+    <div class="card" style="margin-top:10px">
+      <h4 style="margin:0 0 6px">Projeções (sem compor; estimativas)</h4>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+        <div class="pill"><b>Lucro/dia</b><span id="out_profit_day">—</span></div>
+        <div class="pill"><b>Lucro em 7 dias</b><span id="out_profit_7">—</span></div>
+        <div class="pill"><b>Lucro em 30 dias</b><span id="out_profit_30">—</span></div>
+      </div>
+      <div class="muted sm" style="margin-top:8px">
+        Se atingir a meta diária (TP), considere <b>sacar 30–50%</b> para proteger ganhos e/ou <b>deixar o restante</b> para crescer.
+      </div>
+    </div>
+
+    <!-- Avisos -->
+    <div class="card" style="margin-top:10px;background:#0b1524;border-color:#223052">
+      <b>Aviso</b>
+      <p class="muted sm" style="margin:6px 0 0">
+        • Mesmo com plano, perdas podem ocorrer. Evite operar cansado ou tiltado.<br/>
+        • Ajuste stake/TP/SL se a volatilidade estiver alta.<br/>
+        • Martingale eleva risco; prefira sem ou com limite muito baixo.
+      </p>
+    </div>
+
+  </div>
+</div>
+<!-- ========== /MODAL: GERENCIAMENTO DE BANCA ========== -->
+
+
+<!-- Modal: Ranking dos Traders -->
+<div id="modal_rank" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;align-items:center;justify-content:center">
+  <div class="card" style="max-width:980px;width:92%;max-height:86vh;overflow:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <h3 style="margin:0">Ranking dos Traders — Top 20 (simulado)</h3>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="btn_rank_refresh" class="btn-mini" title="Gerar novos ganhos agora">Atualizar agora</button>
+        <button id="close_rank" class="btn-mini">Fechar</button>
+      </div>
+    </div>
+
+    <p class="muted" style="margin-top:6px">
+      Lista ilustrativa e gerada automaticamente (IDs e ganhos simulados, atualiza com novas contas ao longo do tempo).
+    </p>
+
+    <div style="margin-top:8px;overflow:auto;border:1px solid #263453;border-radius:10px">
+      <table class="rank-table" style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="background:#0b1524">
+            <th style="padding:10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)">Pos</th>
+            <th style="padding:10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)">Conta</th>
+            <th style="padding:10px;text-align:right;border-bottom:1px solid rgba(255,255,255,.06)">Ganhos</th>
+            <th style="padding:10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)">Atualizado</th>
+          </tr>
+        </thead>
+        <tbody id="rank_table_body"></tbody>
+      </table>
+    </div>
+
+    <div class="muted" style="font-size:12px;margin-top:8px">
+      Atualização automática..... a cada 2 horas são classificados e adicionado ao Ranking 7 traders consoante seus ganhos.
+    </div>
+  </div>
 </div>
 
-<audio class="sound" id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+
+
+<!-- Áudio: som de dinheiro (CDN jsDelivr) -->
+<audio id="cash_sound"
+       src="https://cdn.jsdelivr.net/gh/paulomiller2025/som-de-dinheiro-cash@main/audio/cash.mp3"
+       preload="auto"
+       crossorigin="anonymous"
+       playsinline></audio>
 
 <script>
-function calcularMetas() {
-  let banca = parseFloat(document.getElementById("banca").value);
-  let meta = parseFloat(document.getElementById("meta").value);
-  let stop = parseFloat(document.getElementById("stop").value);
-  if (isNaN(banca) || banca <= 0) {
-    alert("Insira uma banca válida.");
-    return;
+/* ========= Utilidades rápidas ========= */
+const $=id=>document.getElementById(id);
+function fmt(n,d=2){return (typeof n==='number'&&isFinite(n))?n.toFixed(d):n;}
+function now(){return new Date().toLocaleTimeString();}
+
+/* ========= Menu e “online” ========= */
+(function(){
+  const mw=$('menu_wrap'); $('btn_menu').onclick=()=>mw.classList.toggle('open');
+  document.addEventListener('click',e=>{if(!mw.contains(e.target))mw.classList.remove('open');});
+  function bump(){ $('online_count').textContent= String(Math.floor(120+Math.random()*580)); }
+  bump(); setInterval(bump,12000);
+  const mt=$('modal_training'), mtr=$('modal_terms');
+  $('menu_training').onclick=(e)=>{e.preventDefault(); mt.style.display='flex';};
+  $('menu_terms').onclick=(e)=>{e.preventDefault(); mtr.style.display='flex';};
+  $('close_training').onclick=()=>mt.style.display='none';
+  $('close_terms').onclick=()=>mtr.style.display='none';
+  mt.addEventListener('click',e=>{if(e.target===mt)mt.style.display='none';});
+  mtr.addEventListener('click',e=>{if(e.target===mtr)mtr.style.display='none';});
+})();
+
+/* ========= Estado global ========= */
+const APP_ID = '86139';
+const REDIRECT_URI = window.location.origin + window.location.pathname; // adicione este URI na whitelist do seu App na Deriv
+const OAUTH_SCOPE = 'read trade';
+
+let ws=null, authorized=false;
+let account_info={loginid:'',is_virtual:null,currency:'USD'};
+let open_position=null;
+let session_pl=0, opsWin=0, opsLose=0;
+let auto_running=false;
+let last_exit_tick=null;
+let last_trade=null;
+let lastDigitsWindow=[], lastPricesWindow=[], tick_history=[];
+const WINDOW_SIZE=25, SMA_FAST=5, SMA_SLOW=20;
+
+/* ========= Som de vitória “cash” (via <audio>) ========= */
+let soundEnabled = true;
+const cashEl = document.getElementById('cash_sound');
+
+/* Desbloqueia áudio em navegadores que exigem gesto do usuário (iOS/Chrome) */
+(function primeAudioOnce(){
+  const prime = () => {
+    if (!cashEl) return;
+    cashEl.muted = true;
+    cashEl.play().then(()=>{ cashEl.pause(); cashEl.currentTime = 0; cashEl.muted = !soundEnabled; }).catch(()=>{});
+    window.removeEventListener('click', prime);
+    window.removeEventListener('touchstart', prime);
+    window.removeEventListener('keydown', prime);
+  };
+  window.addEventListener('click', prime, { once:true });
+  window.addEventListener('touchstart', prime, { once:true });
+  window.addEventListener('keydown', prime, { once:true });
+})();
+
+/* Toca o som de dinheiro ao vencer */
+function playCash(){
+  if (!soundEnabled || !cashEl) return;
+  try {
+    cashEl.muted = false;
+    cashEl.currentTime = 0;
+    const p = cashEl.play();
+    if (p && typeof p.then === 'function') p.catch(()=>{ /* ignorar bloqueio */ });
+  } catch(e) { /* silencioso */ }
+}
+
+/* Botão de alternar som */
+$('btn_sound_toggle').onclick = () => {
+  soundEnabled = !soundEnabled;
+  if (cashEl) cashEl.muted = !soundEnabled;
+  $('btn_sound_toggle').textContent = soundEnabled ? '🔔 Som' : '🔕 Som';};
+
+/* ========= Chart ========= */
+let chart=null, chartMode='digits';
+function initDigitsChart(){
+  const ctx=$('main_chart').getContext('2d');
+  const drawLabels = {
+    id:'drawLabels',
+    afterDatasetsDraw(chart){
+      if(!chart || !chart.data || !chart.data.datasets?.[0]) return;
+      const {ctx} = chart;
+      const meta = chart.getDatasetMeta(0);
+      ctx.save();
+      ctx.font = '12px system-ui, Arial';
+      ctx.fillStyle = '#cfe8ff';
+      ctx.textAlign = 'center';
+      meta.data.forEach((bar, i) => {
+        const v = chart.data.datasets[0].data[i] || 0;
+        if (v > 0) ctx.fillText(v + '%', bar.x, bar.y - 6);
+      });
+      ctx.restore();
+    }
+  };
+  chart=new Chart(ctx,{
+    type:'bar',
+    data:{labels:['0','1','2','3','4','5','6','7','8','9'],datasets:[{data:Array(10).fill(0),backgroundColor:Array(10).fill('#d3d3d3')}]},
+    options:{responsive:true,animation:{duration:280,easing:'easeOutQuart'},plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,suggestedMax:24}}},
+    plugins:[drawLabels]
+  });
+}
+function updateDigitsChart(){
+  const cnt=Array(10).fill(0); lastDigitsWindow.forEach(d=>cnt[d]++);
+  const pct=cnt.map(c=>lastDigitsWindow.length?Math.round(c/lastDigitsWindow.length*100):0);
+  chart.data.datasets[0].data=pct;
+  chart.data.datasets[0].backgroundColor=pct.map(p=>p<=4?'#ef4444':(p<=12?'#d3d3d3':'#22c55e'));
+  chart.update();
+}
+function initRiseFallChart(){
+  const ctx=$('main_chart').getContext('2d');
+  chart=new Chart(ctx,{type:'line',data:{labels:[],datasets:[{data:[],borderColor:'#2a62ff',tension:.25,pointRadius:2,fill:false}]},options:{responsive:true,animation:{duration:280,easing:'easeOutQuart'},plugins:{legend:{display:false}}}});
+}
+function updateRiseFallChart(){ chart.data.labels=lastPricesWindow.map(()=> ''); chart.data.datasets[0].data=lastPricesWindow.slice(-WINDOW_SIZE); chart.update(); }
+
+/* ========= KPIs / UI ========= */
+function setProgressState(s){['step_analyzing','step_open','step_closed'].forEach(id=>$(id).classList.remove('active')); if(s==='analyzing')$('step_analyzing').classList.add('active'); if(s==='open')$('step_open').classList.add('active'); if(s==='closed')$('step_closed').classList.add('active');}
+function updateKPIs(){
+  $('pl_session').textContent='$'+fmt(session_pl,2);
+  $('pl_session').style.color=session_pl>=0?'#22c55e':'#ef4444';
+  $('operations_count').textContent=`Operações ${opsWin} / ${opsLose}`;
+  $('open_status').textContent=open_position?'Sim':'Não';
+  $('account_info').textContent= account_info.loginid? (account_info.is_virtual?'Conta Virtual':'Conta Real') : '—';
+}
+function updateAutoBtn(){
+  const b=$('btn_auto'), p=$('icon_play'), s=$('icon_stop');
+  if(auto_running){ b.classList.remove('play');b.classList.add('stop');p.style.display='none';s.style.display='block';}
+  else{ b.classList.add('play');b.classList.remove('stop');p.style.display='block';s.style.display='none';}
+}
+
+/* ======== Notificação central (TP/SL) ======== */
+function showCenterNotification(message, bgColor = '#000000', duration = 3000) {
+  let el = document.getElementById('center-notification');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'center-notification';
+    Object.assign(el.style, {
+      position:'fixed', top:'50%', left:'50%',
+      transform:'translate(-50%,-50%) scale(0.9)',
+      padding:'16px 22px', borderRadius:'12px',
+      fontSize:'16px', fontWeight:'700', color:'#000',
+      textAlign:'center', zIndex:'9999',
+      boxShadow:'0 10px 28px rgba(0,0,0,.35)',
+      opacity:'0', transition:'all .28s ease'
+    });
+    document.body.appendChild(el);
   }
-  let diaria = (banca * meta / 100).toFixed(2);
-  let semanal = (diaria * 7).toFixed(2);
-  let mensal = (diaria * 30).toFixed(2);
-  let stopLoss = (banca * stop / 100).toFixed(2);
-  document.getElementById("result").innerHTML = `
-    <p>📅 Meta Diária: <strong>$${diaria}</strong></p>
-    <p>📆 Meta Semanal: <strong>$${semanal}</strong></p>
-    <p>📆 Meta Mensal: <strong>$${mensal}</strong></p>
-    <p>🛡 Stop Loss: <strong>$${stopLoss}</strong></p>
-    <p>⚠️ Menor meta = menor risco.</p>`;
-}
+  el.innerHTML = '';
+  const text = document.createElement('div');
+  text.textContent = message;
+  const ok = document.createElement('button');
+  ok.textContent = 'OK';
+  Object.assign(ok.style, {
+    marginTop:'10px', padding:'8px 16px',
+    border:'0', borderRadius:'8px',
+    background:'#000', color:'#fff', fontWeight:'700', cursor:'pointer'
+  });
+  ok.onclick = hide;
+  el.appendChild(text); el.appendChild(ok);
 
-function confirmarMentoria() {
-  const resposta = confirm("Quer acessar agora o Treinamento Completo com Paulo Miller?");
-  if (resposta) {
-    window.open("https://paulomiller2025.github.io/Banka-Milion-ria/", "_blank");
-  } else {
-    alert("Pode voltar quando estiver preparado. Continuamos aqui para te apoiar.");
-  }
-}
-
-function playSound() {
-  document.getElementById("clickSound").play();
-}
-
-function calcularResultado() {
-  const respostas = { q1: null, q2: null, q3: null };
-  document.querySelectorAll(".quiz-card").forEach(card => {
-    const question = card.getAttribute("data-question");
-    const active = card.querySelector(".quiz-option.active");
-    if (active) respostas[question] = active.getAttribute("data-value");
+  el.style.background = bgColor;
+  requestAnimationFrame(()=>{
+    el.style.opacity='1';
+    el.style.transform='translate(-50%,-50%) scale(1)';
   });
 
-  if (!respostas.q1 || !respostas.q2 || !respostas.q3) {
-    alert("Por favor, responda todas as perguntas.");
+  let timer;
+  function hide(){
+    el.style.opacity='0';
+    el.style.transform='translate(-50%,-50%) scale(0.9)';
+    clearTimeout(timer);
+    setTimeout(()=>{ if(el && el.parentNode) el.parentNode.removeChild(el); }, 240);
+  }
+  if (duration && duration > 0) timer = setTimeout(hide, duration);
+}
+
+/* ========= OAuth / contas ========= */
+function beginOAuth(){
+  const url = `https://oauth.deriv.com/oauth2/authorize?app_id=${APP_ID}` +
+              `&scope=${encodeURIComponent(OAUTH_SCOPE)}` +
+              `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+  window.location.href = url;
+}
+
+// Parse robusto: lê hash e query; cacheia no localStorage; limpa a URL
+function parseOAuthTokens(){
+  const h = new URLSearchParams(window.location.hash.slice(1));
+  const s = new URLSearchParams(window.location.search);
+  s.forEach((v,k)=>{ if(!h.get(k)) h.set(k,v); });
+
+  const out = [];
+  const pushPair = (tk, ac, cur) => {
+    if (!tk || !ac) return;
+    out.push({
+      loginid: ac,
+      token: tk,
+      currency: cur || 'USD',
+      is_virtual: /VRTC/.test(ac)
+    });
+  };
+
+  if (h.get('token') || h.get('acct')) pushPair(h.get('token'), h.get('acct'), h.get('cur'));
+  for (let i=1;i<=20;i++){
+    pushPair(h.get('token'+i), h.get('acct'+i), h.get('cur'+i));
+  }
+
+  if (out.length){
+    localStorage.setItem('deriv_oauth_map', JSON.stringify(out));
+    history.replaceState({}, document.title, window.location.origin + window.location.pathname);
+  }
+
+  if (!out.length){
+    try {
+      const cached = JSON.parse(localStorage.getItem('deriv_oauth_map') || '[]');
+      if (Array.isArray(cached)) return cached;
+    } catch {}
+  }
+  return out;
+}
+
+function populateAccounts(){
+  const list = parseOAuthTokens(), sel=$('account_select'); sel.innerHTML='';
+  if(list.length===0){sel.disabled=true; return;}
+  list.forEach((a,i)=>{ const opt=document.createElement('option'); opt.value=String(i); opt.textContent=`${a.loginid} • ${a.is_virtual?'DEMO':'REAL'} ${a.currency}`; sel.appendChild(opt); });
+  sel.disabled=false;
+}
+function getSelectedAccount(){ const list=parseOAuthTokens(); const idx=parseInt(($('account_select').value||'0'),10); return list[idx]||null; }
+
+/* ========= WebSocket / Deriv ========= */
+function wsSend(o){ if(ws&&ws.readyState===1) ws.send(JSON.stringify(o)); }
+function subscribeTicks(symbol){ try{ wsSend({forget_all:'ticks'});}catch(e){} tick_history.length=0; lastDigitsWindow.length=0; lastPricesWindow.length=0; wsSend({ticks:symbol,subscribe:1}); }
+
+function connectWS(){
+  const acc=getSelectedAccount(); if(!acc){ beginOAuth(); return; }
+  if(ws) try{ ws.close(); }catch(e){}
+  ws=new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`);
+  ws.onopen=()=>wsSend({authorize:acc.token});
+  ws.onclose=()=>{authorized=false;};
+  ws.onmessage=(m)=>{const data=JSON.parse(m.data); if(data.error){console.warn(data.error); return;}
+    switch(data.msg_type){
+      case 'authorize':
+        authorized=true; account_info={loginid:data.authorize.loginid,is_virtual:data.authorize.is_virtual,currency:data.authorize.currency||'USD'};
+        $('balance').textContent='—'; updateKPIs();
+        wsSend({balance:1,subscribe:1});
+        subscribeTicks($('symbol').value);
+        break;
+      case 'balance':
+        $('balance').textContent=`${fmt(data.balance.balance,2)} ${data.balance.currency}`;
+        break;
+      case 'tick':
+        onTick(Number(data.tick.quote));
+        break;
+      case 'proposal':
+        if(pending_proposal && data.proposal && pending_proposal.context==='buy'){
+          const p=data.proposal; wsSend({buy:p.id,price:p.ask_price}); pending_proposal=null; setProgressState('open');
+        }
+        break;
+      case 'buy': onBuyFilled(data.buy); break;
+      case 'proposal_open_contract': onContractUpdate(data.proposal_open_contract); break;
+    }
+  };
+}
+
+$('btn_connect').onclick=connectWS;
+$('btn_disconnect').onclick=()=>{
+  try{ if(ws) ws.close(); }catch(e){}
+  const url=new URL(window.location.href); url.search=''; window.location.replace(url.toString());
+};
+
+/* ========= Ticks ========= */
+function getDecimalPlacesForSymbol(s){ return ({R_10:3,R_25:3,R_50:4,R_75:4,R_100:2})[s]??4; }
+function onTick(price){
+  const symbol=$('symbol').value, dp=getDecimalPlacesForSymbol(symbol);
+  const priceStr=Number.isFinite(price)?price.toFixed(dp):String(price);
+  $('last_tick').textContent=priceStr;
+  const digitsOnly=priceStr.replace(/\D/g,''); const ld=digitsOnly.length?parseInt(digitsOnly.at(-1),10):0;
+  $('last_digit').textContent=ld;
+
+  lastPricesWindow.push(price); if(lastPricesWindow.length>WINDOW_SIZE) lastPricesWindow.shift();
+  lastDigitsWindow.push(ld); if(lastDigitsWindow.length>WINDOW_SIZE) lastDigitsWindow.shift();
+
+  if(chartMode==='digits') updateDigitsChart(); else updateRiseFallChart();
+
+  // SMA (para estratégia)
+  tick_history.push(price); if(tick_history.length>500) tick_history.shift();
+
+  if(auto_running && !open_position) maybeAutoSignal();
+}
+
+/* ========= Propostas / Ordens ========= */
+let pending_proposal=null;
+function proposeAndBuy(params){
+  if(!authorized){ alert('Conecte primeiro.'); return; }
+  if(open_position) return;
+  const tp=parseFloat($('tp_session').value||'0'), sl=parseFloat($('sl_session').value||'0');
+  if(tp>0 && session_pl>=tp) {auto_running=false;updateAutoBtn();return;}
+  if(sl<0 && session_pl<=sl) {auto_running=false;updateAutoBtn();return;}
+  pending_proposal={context:'buy',params}; wsSend(Object.assign({proposal:1},params)); setProgressState('analyzing');
+}
+function onBuyFilled(buy){
+  open_position={contract_id:buy.contract_id,buy_price:parseFloat(buy.buy_price||0),currency:buy.currency||''};
+  wsSend({proposal_open_contract:1,contract_id:buy.contract_id,subscribe:1});
+}
+function onContractUpdate(poc){
+  if(!poc) return; last_exit_tick=(poc.exit_tick!=null)?String(poc.exit_tick):null;
+  if(!poc.is_sold){ setProgressState('open'); return; }
+  setProgressState('closed');
+  const pl=parseFloat(poc.profit||0); session_pl+=pl;
+  const finalTick=(last_exit_tick!=null)?last_exit_tick.slice(-1):$('last_digit').textContent;
+  const strat=last_trade?last_trade.strategy:$('strategy').value;
+  let stakeValue=parseFloat($('stake').value)||1;
+  if(last_trade && last_trade.attempt>0) stakeValue=last_trade.base_stake*Math.pow(2,last_trade.attempt);
+
+  if(pl>=0){opsWin++; playCash(); addLog(strat,finalTick,stakeValue,pl,true);} else {opsLose++; addLog(strat,finalTick,stakeValue,pl,false);}
+  updateKPIs();
+
+  // Martingale (limite de perdas seguidas)
+  if(last_trade && pl<0){
+    const mgMax=parseInt($('mg_losses').value||'0',10);
+    if(last_trade.attempt<mgMax){
+      last_trade.attempt++;
+      const nextStake=last_trade.base_stake*Math.pow(2,last_trade.attempt);
+      const p=Object.assign({},last_trade.params_original); p.amount=nextStake;
+      setTimeout(()=>{ pending_proposal={context:'buy',martingale:true}; wsSend(Object.assign({proposal:1},p)); },400);
+    }else last_trade=null;
+  }else last_trade=null;
+
+  open_position=null; updateKPIs();
+
+  const tp=parseFloat($('tp_session').value||'0'), sl=parseFloat($('sl_session').value||'0');
+  if ((tp > 0 && session_pl >= tp) || (sl < 0 && session_pl <= sl)) {
+    auto_running = false;
+    updateAutoBtn();
+    if (tp > 0 && session_pl >= tp) {
+      showCenterNotification('✅ Parabéns! Meta de lucro atingida!', '#C7F9CC', 0);
+    } else {
+      showCenterNotification('⚠️ Limite de perdas atingido!', '#FFD6A5', 0);
+    }
+  }
+}
+function addLog(strategy,tick,price,result,isWin){
+  const row=document.createElement('div'); row.className='history-row';
+  row.innerHTML=`<span class="h-time">${now()}</span>
+  <span class="h-strat">${strategy}</span>
+  <span class="h-tick">${tick}</span>
+  <span class="h-price">$${parseFloat(price||0).toFixed(2)}</span>
+  <span class="h-result" style="color:${isWin?'#22c55e':'#ef4444'}">${fmt(result)}</span>`;
+  $('log').prepend(row);
+}
+
+/* ========= Estratégias ========= */
+function sma(arr,len){ if(arr.length<len) return null; let s=0; for(let i=arr.length-len;i<arr.length;i++) s+=arr[i]; return s/len; }
+function maybeAutoSignal(){
+  const strategy=$('strategy').value, symbol=$('symbol').value, currency=$('currency').value;
+  const baseStake=parseFloat($('stake').value)||1; const dur=parseInt($('duration').value||'1',10); const unit=$('duration_unit').value;
+  if(strategy==='manual'){ setProgressState('analyzing'); return; }
+
+  if(strategy==='sma'){
+    const n=tick_history.length; if(n<SMA_SLOW+2) return;
+    const sfast=sma(tick_history,SMA_FAST), sslow=sma(tick_history,SMA_SLOW);
+    const prev_fast=sma(tick_history.slice(0,n-1),SMA_FAST), prev_slow=sma(tick_history.slice(0,n-1),SMA_SLOW);
+    if(prev_fast<=prev_slow && sfast>sslow) proposeAndBuy({amount:baseStake,basis:'stake',currency,contract_type:'CALL',duration:dur,duration_unit:unit,symbol});
+    else if(prev_fast>=prev_slow && sfast<sslow) proposeAndBuy({amount:baseStake,basis:'stake',currency,contract_type:'PUT',duration:dur,duration_unit:unit,symbol});
     return;
   }
 
-  let perfil = { conservador: 0, moderado: 0, agressivo: 0 };
-  Object.values(respostas).forEach(val => perfil[val]++);
-  let tipo = perfil.agressivo >= 2 ? 'agressivo' : perfil.moderado >= 2 ? 'moderado' : 'conservador';
+  let contract_type=null, extra={};
+  if(strategy==='digit_even') contract_type='DIGITEVEN';
+  else if(strategy==='digit_odd') contract_type='DIGITODD';
+  else if(strategy==='digit_over'){ contract_type='DIGITOVER'; extra.barrier=String(Math.max(0,Math.min(9,parseInt($('digit_threshold').value||'4',10)))); }
+  else if(strategy==='digit_under'){ contract_type='DIGITUNDER'; extra.barrier=String(Math.max(0,Math.min(9,parseInt($('digit_threshold').value||'4',10)))); }
+  else if(strategy==='digit_matches'){ contract_type='DIGITMATCH'; extra.barrier=String(Math.max(0,Math.min(9,parseInt($('digit_threshold').value||'4',10)))); }
+  else if(strategy==='digit_differs'){ contract_type='DIGITDIFF'; extra.barrier=String(Math.max(0,Math.min(9,parseInt($('digit_threshold').value||'4',10)))); }
+  else if(strategy==='asian_up') contract_type='ASIANU';
+  else if(strategy==='asian_down') contract_type='ASIAND';
+  if(!contract_type) return;
 
-  let mensagem = '';
-  if (tipo === 'conservador') {
-    mensagem = `<strong>Trader Conservador</strong><br>Prefere segurança e estabilidade.<br>Recomendado: Bot Genius, Trump V2, Thanos.`;
-  } else if (tipo === 'moderado') {
-    mensagem = `<strong>Trader Moderado</strong><br>Equilíbrio entre risco e retorno.<br>Recomendado: Bot Thanos, Genius, Trump V2.`;
+  let stakeToUse=baseStake; if(last_trade && last_trade.strategy===strategy) stakeToUse=last_trade.base_stake*Math.pow(2,last_trade.attempt);
+  const params=Object.assign({amount:stakeToUse,basis:'stake',currency,duration:1,duration_unit:'t',symbol,contract_type},extra);
+  last_trade={strategy,base_stake:baseStake,attempt:0,params_original:Object.assign({},params)};
+  proposeAndBuy(params);
+}
+$('strategy').onchange=()=>{$('digit_box').style.display=(['digit_over','digit_under','digit_matches','digit_differs'].includes($('strategy').value))?'block':'none';};
+
+/* ========= Controles ========= */
+$('btn_config').onclick=()=>{ const d=$('config_drawer'); d.style.display=(d.style.display==='block'?'none':'block'); };
+$('btn_auto').onclick=()=>{ auto_running=!auto_running; updateAutoBtn(); };
+$('btn_buy_call').onclick=()=>proposeAndBuy({amount:parseFloat($('stake').value)||1,basis:'stake',currency:$('currency').value,contract_type:'CALL',duration:parseInt($('duration').value||'1',10),duration_unit:$('duration_unit').value,symbol:$('symbol').value});
+$('btn_buy_put').onclick =()=>proposeAndBuy({amount:parseFloat($('stake').value)||1,basis:'stake',currency:$('currency').value,contract_type:'PUT', duration:parseInt($('duration').value)||1,duration_unit:($('duration_unit').value),symbol:$('symbol').value});
+$('btn_reset_history').onclick=()=>{ $('log').innerHTML=''; opsWin=0; opsLose=0; session_pl=0; updateKPIs(); };
+
+/* ADIÇÃO: alternância do gráfico dígitos <-> tendência */
+$('btn_chart_toggle').onclick=()=>{
+  if (chartMode === 'digits') {
+    chartMode = 'trend';
+    if (chart) try{ chart.destroy(); }catch(e){}
+    initRiseFallChart();
+    updateRiseFallChart();
+    $('btn_chart_toggle').textContent = 'Ver Dígitos';
   } else {
-    mensagem = `<strong>Trader Agressivo</strong><br>Gosta de altos lucros e riscos.<br>Recomendado: Bot Sniper, Milionário.`;
+    chartMode = 'digits';
+    if (chart) try{ chart.destroy(); }catch(e){}
+    initDigitsChart();
+    updateDigitsChart();
+    $('btn_chart_toggle').textContent = 'Ver Tendência';
   }
+};
 
-  const divResultado = document.getElementById("resultado");
-  divResultado.style.display = 'block';
-  divResultado.innerHTML = mensagem + `<br><a href="https://bankamilionaria.trk.pro" target="_blank" class="cta-button">🚀 Acesse a Banka Milionária</a>`;
-  divResultado.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
+// ►► LISTENERS ADICIONADOS (necessários)
+$('account_select').addEventListener('change', () => { connectWS(); });
+$('symbol').addEventListener('change', (e) => { if (authorized) subscribeTicks(e.target.value); });
 
-function showBox(id) {
-  document.querySelectorAll('.box').forEach(box => box.style.display = 'none');
-  const box = document.getElementById(id);
-  if (box) {
-    box.style.display = 'block';
-    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-}
-
-function calcularStake() {
-  const banca = parseFloat(document.getElementById('bancaSegura').value);
-  let stake = "";
-
-  if (isNaN(banca) || banca <= 0) {
-    stake = "Digite um valor válido para a banca.";
-  } else if (banca < 5) {
-    stake = "Banca muito baixa para operar com segurança.";
-  } else if (banca <= 50) {
-    stake = "$0.35";
-  } else if (banca <= 80) {
-    stake = "$0.40";
-  } else if (banca < 100) {
-    stake = "$0.50";
-  } else if (banca === 100) {
-    stake = "$1.00";
-  } else if (banca <= 200) {
-    stake = "$" + (banca * 0.02).toFixed(2);
-  } else if (banca <= 500) {
-    stake = "$" + (banca * 0.015).toFixed(2);
-  } else if (banca <= 1000) {
-    stake = "$" + (banca * 0.01).toFixed(2);
-  } else {
-    stake = "$" + (banca * 0.005).toFixed(2) + " até $" + (banca * 0.01).toFixed(2);
-  }
-
-  document.getElementById('resultadoStake').innerText = `Stake recomendada: ${stake}`;
-}
-
-document.querySelectorAll('.quiz-option').forEach(button => {
-  button.addEventListener('click', () => {
-    const parent = button.parentElement;
-    parent.querySelectorAll('.quiz-option').forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
-  });
+/* ========= Inicialização ========= */
+window.addEventListener('DOMContentLoaded',()=>{
+  initDigitsChart();            // gráfico padrão
+  populateAccounts();           // carrega contas do OAuth
+  updateKPIs(); updateAutoBtn();
+  // auto-conectar se tokens já estiverem na URL (ou cache)
+  if(parseOAuthTokens().length>0){ connectWS(); }
 });
 </script>
+	
+	<style>
+  /* animação suave ao desaparecer */
+  .footer.fade-out {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity .45s ease, transform .45s ease;
+  }
+</style>
+
+<script>
+  (function () {
+    // quantos segundos o rodapé fica visível
+    const AUTOHIDE_SECONDS = 8; // ajuste como quiser
+
+    const footer = document.querySelector('footer.footer');
+    if (!footer) return;
+
+    setTimeout(() => {
+      // aplica a transição
+      footer.classList.add('fade-out');
+
+      // após a transição, remove do fluxo da página
+      footer.addEventListener('transitionend', () => {
+        footer.style.display = 'none';
+      }, { once: true });
+    }, AUTOHIDE_SECONDS * 1000);
+  })();
+</script>
+	<!-- Botão WhatsApp (troque o número) -->
+<a id="wa_fab"
+   class="whatsapp-fab"
+   href="https://wa.me/244976028040?text=Ol%C3%A1%2C%20preciso%20de%20suporte%20na%20plataforma%20Sora!"
+   target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 32 32" aria-hidden="true">
+    <path d="M19.11 17.55c-.27-.14-1.57-.78-1.81-.87-.24-.09-.42-.14-.6.14-.17.27-.69.87-.85 1.05-.16.18-.31.2-.58.07-.27-.14-1.11-.41-2.11-1.31-.78-.69-1.3-1.54-1.45-1.8-.15-.27-.02-.41.12-.55.12-.12.27-.31.41-.47.14-.16.18-.27.27-.45.09-.18.04-.34-.02-.48-.07-.14-.6-1.44-.82-1.98-.22-.53-.45-.46-.6-.46h-.51c-.17 0-.45.07-.69.34-.24.27-.9.88-.9 2.15 0 1.27.92 2.5 1.05 2.67.13.18 1.82 2.77 4.42 3.88.62.27 1.11.43 1.49.55.63.2 1.2.17 1.65.1.5-.08 1.57-.64 1.79-1.27.22-.62.22-1.16.15-1.27-.07-.11-.25-.18-.52-.32zM16.11 4C9.94 4 5 8.94 5 15.11c0 1.98.52 3.94 1.49 5.65L5 28l7.41-1.94c1.66.9 3.53 1.37 5.7 1.37 6.17 0 11.11-4.94 11.11-11.11S22.28 4 16.11 4zm0 20.09c-1.83 0-3.52-.5-4.96-1.37l-.36-.22-4.39 1.15 1.17-4.28-.24-.38A8.9 8.9 0 0 1 7.2 15.1c0-4.9 3.99-8.89 8.89-8.89s8.89 3.99 8.89 8.89-3.99 8.89-8.89 8.89z"/>
+  </svg>
+</a>
+
+<!-- ======================= AI TOOLS (ACRÉSCIMOS) ======================= -->
+<style>
+  /* Botão do Robô (fica ao lado do Play) */
+  .btn-icon.ai-tools{ border-color:#6b21a8; }
+  .btn-icon.ai-tools:hover{ opacity:.95; transform:translateY(-1px); }
+
+  /* Painel embaixo do gráfico (logo após os botões de compra) */
+  .ai-tools-panel{
+    background:#0f1830;
+    border:1px solid #263453;
+    border-radius:14px;
+    padding:12px;
+    margin-top:10px;
+
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+
+    /* animação de “abrir/fechar” */
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    transform:translateY(-6px);
+    transition:max-height .35s ease, opacity .35s ease, transform .35s ease;
+  }
+  .ai-tools-panel.open{
+    max-height:900px;
+    opacity:1;
+    transform:translateY(0);
+  }
+  @media(min-width:980px){
+    .ai-tools-panel{ grid-template-columns:1fr 1fr 1fr; }
+    .ai-tools-panel.open{ max-height:520px; }
+  }
+
+  .ai-tools-panel .tool{
+    background:#0b1524;
+    border:1px solid #223052;
+    border-radius:12px;
+    padding:12px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+  }
+  .ai-tools-panel h4{ margin:0 0 10px; font-size:14px; letter-spacing:.2px; }
+
+  .ai-tools-panel .kpis{ display:grid; gap:10px; }
+  .ai-tools-panel .kpi{
+    display:grid;
+    grid-template-columns:96px 1fr 72px; /* label | barra | % */
+    gap:10px; align-items:center;
+  }
+  .ai-tools-panel .kpi span.lbl{ color:#9fb0d0; font-size:12px; }
+  .ai-tools-panel .kpi b.pct{ font-size:14px; text-align:right; }
+
+  /* Barra animada com “brilho” */
+  .barwrap{ position:relative; height:12px; }
+  .bar{
+    position:absolute; inset:0;
+    background:#08101b;
+    border:1px solid #1f2b45;
+    border-radius:999px;
+    overflow:hidden;
+  }
+  .bar i{
+    display:block; height:100%; width:0%;
+    transition:width .45s ease;
+    background:linear-gradient(90deg,#2a62ff,#7c3aed);
+    animation:shimmer 2.4s linear infinite;
+    box-shadow:0 0 10px rgba(124,58,237,.35) inset;
+  }
+  .bar i.positive{ background:linear-gradient(90deg,#22c55e,#16a34a); box-shadow:0 0 10px rgba(34,197,94,.35) inset; }
+  .bar i.negative{ background:linear-gradient(90deg,#ef4444,#dc2626); box-shadow:0 0 10px rgba(239,68,68,.35) inset; }
+  @keyframes shimmer{
+    0%{ filter:brightness(1); }
+    50%{ filter:brightness(1.15); }
+    100%{ filter:brightness(1); }
+  }
+
+  /* “confiança” na sugestão */
+  .ai-suggest{ font-weight:700; }
+  .ai-suggest.hot{ color:#22c55e; text-shadow:0 0 10px rgba(34,197,94,.35); }
+  .ai-suggest.cold{ color:#ef4444; text-shadow:0 0 10px rgba(239,68,68,.25); }
+
+  /* Chips Over/Under */
+  .ctl{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+  .chip{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 10px; border:1px solid #263453; border-radius:999px; cursor:pointer;
+    background:#0b1524; color:#cfe8ff; font-size:12px;
+  }
+  .chip input{ accent-color:#7c3aed; }
+  .ai-tools-panel input[type="number"]{ width:84px; padding:8px; border-radius:10px; }
+
+  .mini{ font-size:12px; color:#9fb0d0; margin-top:6px; }
+</style>
+
+
+
+<script>
+/* AI TOOLS: botão Robô + painel abaixo do gráfico (sob os botões de compra) */
+(function(){
+  function setup(){
+    /* -------- 1) Botão Robô (ao lado do Play) -------- */
+    const btnAuto = document.getElementById('btn_auto');
+    if (btnAuto && btnAuto.parentElement && !document.getElementById('btn_ai_tools')){
+      const robo = document.createElement('button');
+      robo.id = 'btn_ai_tools';
+      robo.className = 'btn-icon ai-tools';
+      robo.title = 'Ferramentas de Probabilidade';
+      robo.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 2a1 1 0 0 1 1 1v1.05a6.5 6.5 0 0 1 5 6.345V13a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V10.395A6.5 6.5 0 0 1 11 4.05V3a1 1 0 0 1 1-1zm-3 8a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM7 18h10a2 2 0 0 1 2 2v1H5v-1a2 2 0 0 1 2-2z"/></svg>';
+      btnAuto.parentElement.insertBefore(robo, btnAuto.nextSibling);
+    }
+
+    /* -------- 2) Painel abaixo do gráfico (dentro da mesma card) -------- */
+    if (!document.getElementById('ai_tools')){
+      const panel = document.createElement('div');
+      panel.id = 'ai_tools';
+      panel.className = 'ai-tools-panel';
+      panel.innerHTML = `
+        <div class="tool">
+          <h4>Dígitos Par / Ímpar</h4>
+          <div class="kpis">
+            <div class="kpi">
+              <span class="lbl">Par</span>
+              <div class="barwrap"><div class="bar"><i id="ai_bar_even" class="positive" style="width:0%"></i></div></div>
+              <b id="ai_p_even" class="pct">—</b>
+            </div>
+            <div class="kpi">
+              <span class="lbl">Ímpar</span>
+              <div class="barwrap"><div class="bar"><i id="ai_bar_odd" class="negative" style="width:0%"></i></div></div>
+              <b id="ai_p_odd" class="pct">—</b>
+            </div>
+          </div>
+          <div class="mini">Sugestão: <span id="ai_par_sugg" class="ai-suggest">—</span></div>
+        </div>
+
+        <div class="tool">
+          <h4>Tendência (Rise / Fall)</h4>
+          <div class="kpis">
+            <div class="kpi">
+              <span class="lbl">Subir (Rise / Call)</span>
+              <div class="barwrap"><div class="bar"><i id="ai_bar_up" class="positive" style="width:0%"></i></div></div>
+              <b id="ai_p_up" class="pct">—</b>
+            </div>
+            <div class="kpi">
+              <span class="lbl">Descer (Fall / Put)</span>
+              <div class="barwrap"><div class="bar"><i id="ai_bar_dn" class="negative" style="width:0%"></i></div></div>
+              <b id="ai_p_dn" class="pct">—</b>
+            </div>
+          </div>
+          <div class="mini">
+            Momentum: <b id="ai_mom">—</b> • 
+            Sugestão: <span id="ai_dir_sugg" class="ai-suggest">—</span>
+          </div>
+        </div>
+
+        <div class="tool">
+          <h4>Over / Under (Dígito final)</h4>
+          <div class="ctl">
+            <label class="chip"><input type="radio" name="ai_mode" id="ai_mode_over" checked> Over (maior que k)</label>
+            <label class="chip"><input type="radio" name="ai_mode" id="ai_mode_under"> Under (menor/igual a k)</label>
+            <label for="ai_thr">k</label>
+            <input id="ai_thr" type="number" min="0" max="9" value="5">
+          </div>
+          <div class="kpis">
+            <div class="kpi">
+              <span class="lbl" id="ai_lbl_over">Dígito final MAIOR que k</span>
+              <div class="barwrap"><div class="bar"><i id="ai_bar_over" class="positive" style="width:0%"></i></div></div>
+              <b id="ai_p_over" class="pct">—</b>
+            </div>
+            <div class="kpi">
+              <span class="lbl" id="ai_lbl_under">Dígito final MENOR/IGUAL a k</span>
+              <div class="barwrap"><div class="bar"><i id="ai_bar_under" class="negative" style="width:0%"></i></div></div>
+              <b id="ai_p_under" class="pct">—</b>
+            </div>
+          </div>
+          <div class="mini">Top dígitos recentes: <b id="ai_top_digits">—</b></div>
+        </div>
+      `;
+      const actions = document.querySelector('.mobile-actions');
+      if(actions && actions.parentElement){ actions.parentElement.insertBefore(panel, actions.nextSibling); }
+      else{ document.body.appendChild(panel); }
+    }
+
+    // Toggle abre/fecha
+    document.getElementById('btn_ai_tools')?.addEventListener('click', ()=>{
+      document.getElementById('ai_tools')?.classList.toggle('open');
+    });
+
+    /* =================== Engine SoraProb =================== */
+    const els = {
+      pEven:  document.getElementById('ai_p_even'),
+      pOdd:   document.getElementById('ai_p_odd'),
+      barE:   document.getElementById('ai_bar_even'),
+      barO:   document.getElementById('ai_bar_odd'),
+      parS:   document.getElementById('ai_par_sugg'),
+
+      pUp:    document.getElementById('ai_p_up'),
+      pDn:    document.getElementById('ai_p_dn'),
+      barUp:  document.getElementById('ai_bar_up'),
+      barDn:  document.getElementById('ai_bar_dn'),
+      mom:    document.getElementById('ai_mom'),
+      dirS:   document.getElementById('ai_dir_sugg'),
+
+      thr:    document.getElementById('ai_thr'),
+      pOver:  document.getElementById('ai_p_over'),
+      pUnder: document.getElementById('ai_p_under'),
+      barOv:  document.getElementById('ai_bar_over'),
+      barUn:  document.getElementById('ai_bar_under'),
+      top:    document.getElementById('ai_top_digits'),
+      modeOver: document.getElementById('ai_mode_over'),
+      modeUnder: document.getElementById('ai_mode_under'),
+      lblOv:  document.getElementById('ai_lbl_over'),
+      lblUn:  document.getElementById('ai_lbl_under'),
+    };
+
+    const N = 1200; // janela de amostragem (⚠ agora só UMA vez)
+    const st = {
+      prices: [], digits: [], counts: new Array(10).fill(0),
+      even:0, odd:0, lastPrice:null, ups:0, downs:0, emaF:null, emaS:null,
+      lastVals:{even:0.5,odd:0.5,up:0.5,dn:0.5,over:0.5,under:0.5}
+    };
+
+    const pct = x => (x*100).toFixed(2)+'%';
+    const clamp = (x,a,b)=> Math.max(a,Math.min(b,x));
+    const betaMean = (a,b)=> a/(a+b);
+    const ema = (prev,x,len)=> prev==null?x:(prev + (2/(len+1))*(x-prev));
+    function lastDigitFromPrice(p){
+      const dp = ({R_10:3,R_25:3,R_50:4,R_75:4,R_100:2})[document.getElementById('symbol')?.value] ?? 4;
+      const n = Math.abs(Math.floor(p * Math.pow(10, dp) + 1e-6));
+      return n % 10;
+    }
+    function animatePct(el, from, to){
+      const dur = 320, t0 = performance.now();
+      function step(t){
+        const k = Math.min(1,(t - t0)/dur);
+        const v = from + (to-from)*k;
+        el.textContent = pct(v);
+        if(k<1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    function setSuggest(el, text, confDelta){
+      el.textContent = text;
+      el.classList.remove('hot','cold');
+      if(!text || text==='—') return;
+      if(confDelta>=0.06) el.classList.add('hot');
+      else if(confDelta<=-0.06) el.classList.add('cold');
+    }
+
+    function updateParityUI(){
+      const pEven = betaMean(0.5+st.even, 0.5+st.odd);
+      const pOdd  = 1-pEven;
+      animatePct(els.pEven, st.lastVals.even, pEven);
+      animatePct(els.pOdd,  st.lastVals.odd,  pOdd);
+      els.barE.style.width  = (pEven*100)+'%';
+      els.barO.style.width  = (pOdd*100)+'%';
+      const delta = pEven - pOdd;
+      setSuggest(els.parS, Math.abs(delta)>=0.02 ? (delta>0?'Par':'Ímpar') : '—', Math.abs(delta));
+      st.lastVals.even = pEven; st.lastVals.odd = pOdd;
+    }
+
+    function updateRiseFallUI(){
+      let pUp = betaMean(0.5+st.ups, 0.5+st.downs);
+      const momUp = (st.emaF!=null && st.emaS!=null && st.emaF>st.emaS);
+      pUp = clamp(pUp + (momUp? +0.05 : -0.05), 0, 1);
+      const pDn = 1-pUp;
+      animatePct(els.pUp, st.lastVals.up, pUp);
+      animatePct(els.pDn, st.lastVals.dn, pDn);
+      els.barUp.style.width = (pUp*100)+'%';
+      els.barDn.style.width = (pDn*100)+'%';
+      els.mom.textContent = momUp ? '↑ EMAs favorecem alta' : '↓ EMAs favorecem queda';
+      const delta = pUp - pDn;
+      setSuggest(els.dirS, Math.abs(delta)>=0.02 ? (delta>0?'Rise / Call':'Fall / Put') : '—', Math.abs(delta));
+      st.lastVals.up = pUp; st.lastVals.dn = pDn;
+    }
+
+    function updateOverUnderUI(){
+      const k = clamp(Number(els.thr?.value||5),0,9);
+      const total = st.digits.length || 1;
+      const isOver = els.modeOver?.checked ?? true;
+      els.lblOv.textContent = isOver ? 'Dígito final MAIOR que k' : 'Dígito final MAIOR/IGUAL a k';
+      els.lblUn.textContent = isOver ? 'Dígito final MENOR/IGUAL a k' : 'Dígito final MENOR que k';
+      let overC=0;
+      if(isOver){ for(let d=k+1; d<=9; d++) overC+=st.counts[d]; }
+      else{       for(let d=k;   d<=9; d++) overC+=st.counts[d]; }
+      const pOver = overC/total, pUnder = 1-pOver;
+      animatePct(els.pOver, st.lastVals.over,  pOver);
+      animatePct(els.pUnder, st.lastVals.under, pUnder);
+      els.barOv.style.width = (pOver*100)+'%';
+      els.barUn.style.width = (pUnder*100)+'%';
+      st.lastVals.over = pOver; st.lastVals.under = pUnder;
+
+      const arr = [...Array(10).keys()].map(d=>({d,p:st.counts[d]/total})).sort((a,b)=>b.p-a.p);
+      els.top.textContent = arr.slice(0,3).map(r=>`${r.d} (${(r.p*100).toFixed(1)}%)`).join('  •  ');
+    }
+
+    els.thr?.addEventListener('input', updateOverUnderUI);
+    els.modeOver?.addEventListener('change', updateOverUnderUI);
+    els.modeUnder?.addEventListener('change', updateOverUnderUI);
+
+    function onTickProb(price){
+      if(st.lastPrice!=null){ (price>st.lastPrice)? st.ups++ : st.downs++; }
+      st.lastPrice = price;
+      st.prices.push(price);
+      if(st.prices.length>N){
+        let U=0,D=0;
+        for(let i=1;i<st.prices.length;i++){ (st.prices[i]>st.prices[i-1])?U++:D++; }
+        st.ups=U; st.downs=D; st.prices.shift();
+      }
+      st.emaF = ema(st.emaF, price, 20);
+      st.emaS = ema(st.emaS, price, 60);
+
+      const d = lastDigitFromPrice(price);
+      st.digits.push(d);
+      st.counts[d]++; (d%2===0? st.even++ : st.odd++);
+      if(st.digits.length>N){
+        const old = st.digits.shift();
+        st.counts[old]--; (old%2===0? st.even-- : st.odd--);
+      }
+
+      updateParityUI(); updateRiseFallUI(); updateOverUnderUI();
+    }
+
+    function reset(){
+      st.prices.length=0; st.digits.length=0;
+      st.counts.fill(0); st.even=0; st.odd=0;
+      st.lastPrice=null; st.ups=0; st.downs=0; st.emaF=null; st.emaS=null;
+      st.lastVals={even:0.5,odd:0.5,up:0.5,dn:0.5,over:0.5,under:0.5};
+      updateParityUI(); updateRiseFallUI(); updateOverUnderUI();
+    }
+
+    // expõe global
+    window.SoraProb = { onTick: onTickProb, reset };
+
+    // envolver a onTick original
+    const _origOnTick = window.onTick;
+    if (typeof _origOnTick === 'function'){
+      window.onTick = function(price){
+        try { window.SoraProb.onTick(price); } catch(e){}
+        return _origOnTick(price);
+      };
+    }
+
+    document.getElementById('symbol')?.addEventListener('change', ()=>{ try{ window.SoraProb.reset(); }catch(e){}; });
+
+    updateParityUI(); updateRiseFallUI(); updateOverUnderUI();
+  }
+
+  // garante que o DOM existe antes de inserir os elementos
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', setup, { once:true });
+  } else {
+    setup();
+  }
+})();
+</script>
+<!-- ===================== /AI TOOLS (FIM DOS ACRÉSCIMOS) ===================== -->
+
+<!-- ======================= HOTFIX (largura + animações cross-device) ======================= -->
+<style>
+  /* Impede “alargar” a página e barra horizontal */
+  html, body { max-width: 100%; overflow-x: hidden; }
+
+  /* Evita que o painel e seus cartões forcem largura */
+  .ai-tools-panel { width: 100%; max-width: 100%; min-width: 0; }
+  .ai-tools-panel .tool { min-width: 0; }
+  main, .grid, .card { min-width: 0; }
+
+  /* Layout fluido de colunas no desktop, sem estourar */
+  @media (min-width: 980px){
+    .ai-tools-panel {
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+  }
+
+  /* Garante que as animações sejam visíveis onde permitido */
+  @media (prefers-reduced-motion: no-preference){
+    .ai-tools-panel { transition: max-height .35s ease, opacity .35s ease, transform .35s ease; }
+    .ai-tools-panel .bar i { transition: width .45s ease; animation: shimmer 2.4s linear infinite; }
+  }
+  /* Respeita usuários com redução de movimento (evita travar layout) */
+  @media (prefers-reduced-motion: reduce){
+    .ai-tools-panel { transition: none; }
+    .ai-tools-panel .bar i { animation: none; }
+  }
+</style>
+<!-- ===================== /HOTFIX ===================== -->
+
+<style id="sora-responsive-fix">
+/* ====== 1) Painel do Robô: sem espaço quando fechado ====== */
+.ai-tools-panel{
+  /* fechado = zero espaço */
+  padding:0 !important;
+  border-width:0 !important;
+  margin-top:0 !important;
+  max-height:0 !important;
+  opacity:0;
+  overflow:hidden;
+  transform:translateY(-6px);
+}
+.ai-tools-panel.open{
+  /* aberto = volta o layout bonito */
+  padding:12px !important;
+  border-width:1px !important;
+  margin-top:10px !important;
+  max-height:900px !important;
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ====== 2) Cabeçalho compacto no mobile (evita “cortar” o menu) ====== */
+@media (max-width: 600px){
+  header{
+    grid-template-columns: 1fr auto !important;
+    grid-template-areas: "brand right" "online online";
+  }
+  header .hflex{ grid-area: brand; }
+  header .rightbar{ grid-area: right; }
+  header .online{ grid-area: online; justify-self:start; margin-top:6px; }
+  .aff-btn{ padding:6px 8px !important; font-size:12px !important; }
+  .menu-btn{ padding:6px 8px !important; font-size:12px !important; }
+}
+header .rightbar{ min-width:0; }
+.menu-wrap{ max-width:100%; }
+
+/* ====== 3) 3 “pills” (Tipo de Conta / Saldo / Lucro) na MESMA linha ====== */
+@media (max-width: 680px){
+  .kpi{ display:grid !important; grid-template-columns: repeat(3, minmax(0,1fr)); gap:8px; }
+  .kpi .pill{ min-width:0 !important; }
+}
+
+/* ====== 4) “Som / Último Dígito / Último Preço” na MESMA linha ====== */
+@media (max-width: 680px){
+  .chart-toolbar{
+    display:grid !important;
+    grid-template-columns: auto 1fr 1fr auto auto;
+    gap:8px;
+  }
+  .chart-toolbar .metric{ min-width:0; padding:8px 10px; font-size:13px; }
+  .chart-toolbar .metric b{ font-size:16px; }
+}
+/* telas bem pequenas: botões extras quebram pra baixo */
+@media (max-width: 360px){
+  .chart-toolbar{ grid-template-columns: auto 1fr 1fr !important; }
+  #btn_reset_history, #btn_chart_toggle{ grid-column: 1 / -1; }
+}
+
+/* ====== 5) Layout móvel mais “fechado” (sem esticar) ====== */
+@media (max-width: 979px){
+  main.grid{ display:block !important; }   /* 1 coluna no mobile */
+  .card{ margin-bottom:14px; }
+}
+
+/* ====== 6) Gráfico um pouco mais baixo no mobile ====== */
+@media (max-width: 600px){
+  #main_chart{ height:200px !important; }
+}
+</style>
+
+<style id="sora-hardening">
+  /* ===== 0) Tipografia elástica (encolhe um pouco no mobile) ===== */
+  :root{
+    --fs-12: clamp(11px, 2.6vw, 12px);
+    --fs-13: clamp(12px, 2.7vw, 13px);
+    --fs-14: clamp(13px, 2.9vw, 14px);
+    --fs-16: clamp(14px, 3.2vw, 16px);
+    --fs-18: clamp(16px, 3.6vw, 18px);
+  }
+
+  /* ===== 1) PÍLULAS: “Tipo de Conta | Saldo | Lucro/Prejuízo” na MESMA linha ===== */
+  /* grid de 3 colunas no mobile e desktop, evitando quebras dentro dos textos */
+  .kpi{
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px !important;
+    margin-top: 8px !important;
+  }
+  .kpi .pill{
+    min-width: 0 !important;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .kpi .pill b,
+  .kpi .pill span{
+    white-space: nowrap;          /* não quebra “Tipo de Conta”, “Lucro/Prejuízo” etc */
+    overflow: hidden;
+    text-overflow: ellipsis;      /* se faltar espaço, põe reticências */
+    font-size: var(--fs-14);
+  }
+  .kpi .pill b{ font-size: var(--fs-13); color:#cfe8ff; }
+
+  /* ===== 2) Barra de métricas: Som | Último Dígito | Último Preço | botões ===== */
+  .chart-toolbar{
+    display: grid !important;
+    grid-template-columns: auto 1fr 1fr auto auto;
+    gap: 8px;
+  }
+  @media (max-width: 380px){
+    .chart-toolbar{ grid-template-columns: auto 1fr 1fr !important; }
+    #btn_reset_history, #btn_chart_toggle{ grid-column: 1 / -1; }
+  }
+  .chart-toolbar .metric{
+    min-width: 0 !important;
+    padding: 8px 10px !important;
+    font-size: var(--fs-13) !important;
+  }
+  .chart-toolbar .metric b{
+    font-size: var(--fs-16) !important;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #btn_sound_toggle, #btn_reset_history, #btn_chart_toggle{
+    font-size: var(--fs-12) !important; padding: 8px 10px !important; white-space: nowrap;
+  }
+
+  /* ===== 3) Cabeçalho: não deixar o Menu “cortar” no mobile ===== */
+  @media (max-width: 640px){
+    header{
+      grid-template-columns: 1fr auto !important;
+      grid-template-areas: "brand right" "online online";
+    }
+    header .hflex{ grid-area: brand; }
+    header .rightbar{ grid-area: right; }
+    header .online{ grid-area: online; justify-self:start; margin-top: 6px; }
+    .aff-btn,.menu-btn{ padding: 6px 8px !important; font-size: var(--fs-12) !important; }
+  }
+  header .rightbar{ min-width: 0; }
+  .menu-wrap{ max-width: 100%; }
+
+  /* ===== 4) Histórico de Transações: nunca quebrar rótulos ===== */
+  .history-headers span{
+    white-space: nowrap !important;    /* evita “Tick / Fina” */
+    font-size: var(--fs-12);
+  }
+  .history-row span{
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: var(--fs-13);
+  }
+
+  /* ===== 5) Gráfico um pouco mais baixo no mobile (cabe tudo) ===== */
+  @media (max-width: 600px){
+    #main_chart{ height: 200px !important; }
+  }
+
+  /* ===== 6) Painel do Robô SEM espaço quando fechado (enrola de verdade) ===== */
+  .ai-tools-panel{
+    padding:0 !important; border-width:0 !important; margin-top:0 !important;
+    max-height:0 !important; opacity:0; overflow:hidden; transform:translateY(-6px);
+  }
+  .ai-tools-panel.open{
+    padding:12px !important; border-width:1px !important; margin-top:10px !important;
+    max-height:900px !important; opacity:1; transform:translateY(0);
+  }
+
+  /* ===== 7) Cards da coluna direita empilhados no mobile ===== */
+  @media (max-width: 979px){
+    main.grid{ display:block !important; }
+    .card{ margin-bottom: 14px; }
+  }
+
+<style id="sora-align-fix">
+  /* Tipografia elástica mínima para caber sem quebrar */
+  :root{
+    --fs-12: clamp(11px, 2.6vw, 12px);
+    --fs-13: clamp(12px, 2.8vw, 13px);
+    --fs-14: clamp(12.5px, 3vw, 14px);
+    --fs-16: clamp(14px, 3.4vw, 16px);
+    --pill-h: 66px;                  /* altura padrão das pílulas */
+  }
+
+  /* ===== 1) “Tipo de Conta | Saldo | Lucro/Prejuízo” em 3 colunas fixas ===== */
+  .kpi{
+    display:grid !important;
+    grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+    gap:12px !important;
+    align-items:stretch;
+  }
+  .kpi .pill{
+    min-width:0 !important;
+    height: var(--pill-h);
+    display:flex; flex-direction:column; justify-content:center;
+    padding:8px 12px !important;
+  }
+  .kpi .pill b{
+    font-size: var(--fs-14) !important;
+    white-space:nowrap !important; overflow:hidden; text-overflow:ellipsis;
+    line-height:1.1;
+  }
+  .kpi .pill span,
+  .kpi .pill div{
+    font-size: var(--fs-16) !important;
+    white-space:nowrap !important; overflow:hidden; text-overflow:ellipsis;
+    line-height:1.1;
+  }
+
+  /* ===== 2) Faixa: Som | Último Dígito | Último Preço ===== */
+  .chart-toolbar{
+    display:grid !important;
+    grid-template-columns: auto 1fr 1fr !important;
+    gap:10px !important;
+    align-items:stretch;
+  }
+  /* “pílula” visual para Som e para os blocos de métrica */
+  #btn_sound_toggle{
+    background:#0f1830 !important; border:1px solid #2a3a5e !important;
+    border-radius:12px !important; padding:10px 12px !important;
+    font-size:var(--fs-12) !important; height: var(--pill-h);
+    white-space:nowrap !important;
+  }
+  .chart-toolbar .metric{
+    min-width:0 !important;
+    background:#0f1830 !important; border:1px solid #2a3a5e !important;
+    border-radius:12px !important; padding:10px 12px !important;
+    font-size:var(--fs-14) !important; height: var(--pill-h);
+    display:flex; align-items:center; gap:8px;
+  }
+  .chart-toolbar .metric b{
+    font-size:var(--fs-16) !important; white-space:nowrap !important;
+    overflow:hidden; text-overflow:ellipsis;
+  }
+  /* botões auxiliares vão para a linha de baixo somente quando MUITO estreito */
+  @media (max-width: 420px){
+    #btn_reset_history, #btn_chart_toggle{ grid-column: 1 / -1; }
+  }
+
+  /* ===== 3) Cabeçalhos do histórico sem quebra ===== */
+  .history-headers span{
+    white-space:nowrap !important;
+    font-size:var(--fs-12) !important;
+  }
+  .history-row span{
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    font-size:var(--fs-13);
+  }
+
+  /* ===== 4) Evita “saltos” de layout em telas pequenas ===== */
+  @media (max-width: 340px){
+    :root{ --pill-h: 60px; }          /* aperta um pouco a altura */
+  }
+
+  /* ===== 5) Painel do Robô sem “buraco” quando fechado ===== */
+  .ai-tools-panel{
+    padding:0 !important; border-width:0 !important; margin-top:0 !important;
+    max-height:0 !important; opacity:0; overflow:hidden; transform:translateY(-6px);
+  }
+  .ai-tools-panel.open{
+    padding:12px !important; border-width:1px !important; margin-top:10px !important;
+    max-height:900px !important; opacity:1; transform:translateY(0);
+  }
+</style>
+</style>
+
+<style id="sora-align-fix-2">
+  /* 1) Evitar corte nas pílulas (mostra tudo) */
+  .kpi .pill b,
+  .kpi .pill span,
+  .kpi .pill div{
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+  /* valores numéricos podem ficar em 1 linha */
+  #balance, #pl_session{
+    white-space: nowrap !important;
+  }
+
+  /* 2) Select “Tipo de Conta” – caber sem cortar */
+  #account_select{
+    font-size: clamp(12px, 3vw, 14px) !important;
+    padding-right: 36px !important; /* espaço da setinha */
+    min-width: 0 !important; width: 100% !important;
+    text-overflow: clip !important;
+  }
+
+  /* 3) Métricas “Último Dígito / Último Preço” – sem corte */
+  .chart-toolbar .metric,
+  .chart-toolbar .metric b{
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+
+  /* 4) Um respiro antes de “Operação Ativa” */
+  .desktop-grid > .progress-first{ margin-top: 8px !important; }
+
+  /* 5) Histórico – rótulos um pouquinho maiores */
+  .history-headers span{
+    font-size: clamp(12.5px, 2.4vw, 13.5px) !important;
+    letter-spacing: .2px;
+  }
+</style>
+<style id="sora-align-fix-3">
+  /* Corrigir labels e valores nas pílulas */
+  .pill b, 
+  .pill span, 
+  .pill div {
+    display: inline !important;     /* força lado a lado */
+    white-space: nowrap !important; /* impede quebra forçada */
+  }
+
+  /* “Lucro/Prejuízo” + operações na mesma linha */
+  .pill span#pl_session,
+  .pill div#operations_count {
+    display: inline !important;
+    margin-left: 6px; /* pequeno espaço entre valor e operações */
+  }
+
+  /* “Tipo de Conta” — mantém numa linha só */
+  #account_info {
+    display: inline !important;
+    white-space: nowrap !important;
+  }
+</style>
+
+
+<script>
+/* =================== BLOQUEIO DE INSPEÇÃO / CLONAGEM =================== */
+
+// 🔒 Bloqueia botão direito em toda a página
+document.addEventListener("contextmenu", function(e) {
+  e.preventDefault();
+}, false);
+
+// 🔒 Lista de atalhos a bloquear
+const blocked = [
+  { key:"F12" },
+  { ctrl:true, shift:true, key:"I" }, // Ctrl+Shift+I
+  { ctrl:true, shift:true, key:"J" }, // Ctrl+Shift+J
+  { ctrl:true, shift:true, key:"C" }, // Ctrl+Shift+C
+  { ctrl:true, shift:true, key:"K" }, // Ctrl+Shift+K
+  { ctrl:true, shift:true, key:"M" }, // Ctrl+Shift+M
+  { ctrl:true, shift:true, key:"E" }, // Ctrl+Shift+E
+  { ctrl:true, key:"U" },             // Ctrl+U (Ver código-fonte)
+  { ctrl:true, key:"S" },             // Ctrl+S (Salvar página)
+  { ctrl:true, key:"C" },             // Ctrl+C (Copiar)
+  { ctrl:true, key:"A" },             // Ctrl+A (Selecionar tudo)
+  { ctrl:true, key:"P" }              // Ctrl+P (Imprimir)
+];
+
+// 🔒 Intercepta teclas
+document.addEventListener("keydown", function(e) {
+  for (const combo of blocked) {
+    if (
+      (combo.key === e.key || combo.key === e.key.toUpperCase()) &&
+      (!!combo.ctrl === e.ctrlKey) &&
+      (!!combo.shift === e.shiftKey)
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }
+}, true);
+</script>
+
+<script>
+/* ====== Gerenciamento de Banca (submenu) ====== */
+(function(){
+  const el = {
+    modal: $('modal_bank'),
+    openBtn: $('menu_bank'),
+    closeBtn: $('close_bank'),
+
+    bank: $('bank_amount'),
+    risk: $('risk_select'),
+    win:  $('exp_winrate'),
+    rr:   $('rr_ratio'),
+    days: $('days_proj'),
+
+    outStake: $('out_stake'),
+    outTP:    $('out_tp'),
+    outSL:    $('out_sl'),
+    outMaxL:  $('out_max_losses'),
+    outTrades:$('out_trades_day'),
+    outStrat: $('out_strategy'),
+
+    outPD: $('out_profit_day'),
+    outP7: $('out_profit_7'),
+    outP30:$('out_profit_30'),
+  };
+
+  // Abre/fecha modal
+  el.openBtn?.addEventListener('click', (e)=>{ e.preventDefault(); el.modal.style.display='flex'; });
+  el.closeBtn?.addEventListener('click', ()=> el.modal.style.display='none');
+  el.modal?.addEventListener('click', (e)=>{ if(e.target===el.modal) el.modal.style.display='none'; });
+
+  function pct(x){ return (x*100).toFixed(2)+'%'; }
+  function fmt(n){ return '$'+Number(n||0).toFixed(2); }
+  function clamp(n,a,b){ return Math.max(a,Math.min(b,n)); }
+
+  // Regras por perfil
+  function riskProfile(r){
+    if(r==='aggressive')   return { stakePct:0.02, tpPct:0.10, slPct:-0.06, trades:25, maxSeq:5 };
+    if(r==='moderate')     return { stakePct:0.01, tpPct:0.06, slPct:-0.04, trades:20, maxSeq:4 };
+    /* conservador */
+    return { stakePct:0.005, tpPct:0.04, slPct:-0.03, trades:15, maxSeq:3 };
+  }
+
+  function recompute(){
+    const bank = clamp(parseFloat(el.bank?.value)||0, 1, 1e9);
+    const prof = riskProfile(el.risk?.value || 'conservative');
+    const win  = clamp((parseFloat(el.win?.value)||55)/100, 0.3, 0.9);
+    const rr   = clamp(parseFloat(el.rr?.value)||0.95, 0.2, 2.0);
+    const days = clamp(parseInt(el.days?.value||7,10), 1, 365);
+
+    // Stake / TP / SL
+    const stake = Math.max(0.35, bank * prof.stakePct); // garante >= $0.35 aprox.
+    const tp    = bank * prof.tpPct;
+    const sl    = bank * prof.slPct; // negativo
+
+    // Projeção diária simples (sem compor)
+    const expPerTrade = (win * rr) - ((1 - win) * 1); // com base em risco=1, ret=rr
+    const expDay = expPerTrade * stake * prof.trades;
+
+    // Projeções
+    const profit7  = expDay * 7;
+    const profit30 = expDay * 30;
+
+    // Saída
+    el.outStake.textContent = fmt(stake);
+    el.outTP.textContent    = fmt(tp);
+    el.outSL.textContent    = fmt(sl);
+
+    el.outMaxL.textContent  = String(prof.maxSeq);
+    el.outTrades.textContent= String(prof.trades);
+    el.outStrat.textContent = 'Dígitos: Even / Odd';
+
+    el.outPD.textContent  = fmt(expDay);
+    el.outP7.textContent  = fmt(profit7);
+    el.outP30.textContent = fmt(profit30);
+  }
+
+  // Escutar mudanças
+  ['bank','risk','win','rr','days'].forEach(id=>{
+    const node = el[id];
+    node?.addEventListener('input', recompute);
+    node?.addEventListener('change', recompute);
+  });
+
+  // Inicial
+  recompute();
+})();
+</script>
+
+<script>
+(function(){
+  // ===== Configurações do ranking (simulado) =====
+  const TOTAL_CONTAS = 10000;     // universo total
+  const MOSTRAR_TOP  = 20;        // lista exibida
+  const INJETAR_CADA_REFRESH = 7; // novas contas por atualização
+  const GANHO_MIN = 1, GANHO_MAX = 973; // faixa de ganhos ($)
+  const ATUALIZAR_MS = 2 * 60 * 60 * 1000; // 2 horas
+
+  const elModal = document.getElementById('modal_rank');
+  const elOpen  = document.getElementById('menu_rank');
+  const elClose = document.getElementById('close_rank');
+  const elBody  = document.getElementById('rank_table_body');
+  const elBtnRefresh = document.getElementById('btn_rank_refresh');
+
+  if(!elModal || !elOpen || !elClose || !elBody) return; // se ainda não colou o modal/link
+
+  // ===== Utilidades =====
+  const randInt = (a,b)=> Math.floor(Math.random()*(b-a+1))+a;
+  const randFrom = arr => arr[Math.floor(Math.random()*arr.length)];
+
+  // Gera um ID de conta com formatos variados (ex.: CR8752052, CRW326543)
+  function gerarContaId(){
+    const prefixos = ['CR','CRW'];
+    const prefix = randFrom(prefixos);
+    // 6 a 8 dígitos, para parecer natural
+    const len = randInt(6,8);
+    let num = '';
+    for(let i=0;i<len;i++) num += randInt(0,9);
+    return prefix + num;
+  }
+
+  function dinheiro(v){
+    return '$' + Number(v).toFixed(0);
+  }
+
+  function horaCurta(d){
+    try{
+      return new Date(d).toLocaleString();
+    }catch{ return ''; }
+  }
+
+  // ===== Estado em memória =====
+  let universo = [];     // { id, ganho, updatedAt }
+  const usados = new Set(); // IDs únicos na sessão
+
+  function gerarInicial(){
+    universo.length = 0;
+    usados.clear();
+    for(let i=0;i<TOTAL_CONTAS;i++){
+      let id;
+      do { id = gerarContaId(); } while(usados.has(id));
+      usados.add(id);
+      universo.push({
+        id,
+        ganho: randInt(GANHO_MIN, GANHO_MAX),
+        updatedAt: Date.now() - randInt(0, 48*60*60*1000) // algo dentro de 48h
+      });
+    }
+  }
+
+  function injetarNovas(qtd){
+    for(let i=0;i<qtd;i++){
+      let id;
+      do { id = gerarContaId(); } while(usados.has(id));
+      usados.add(id);
+      universo.push({
+        id,
+        ganho: randInt(GANHO_MIN, GANHO_MAX),
+        updatedAt: Date.now()
+      });
+    }
+  }
+
+  function topAtual(){
+    // Para variar sempre: reatribui um novo ganho aleatório a uma pequena amostra
+    // (só pra “subir/descer” naturalmente sem mexer nas já mostradas imediatamente)
+    for(let j=0;j<randInt(5,15);j++){
+      const idx = randInt(0, universo.length-1);
+      universo[idx].ganho = randInt(GANHO_MIN, GANHO_MAX);
+      universo[idx].updatedAt = Date.now() - randInt(0, 4*60*60*1000);
+    }
+
+    // Ordena por ganho e pega top N
+    const ordenado = universo.slice().sort((a,b)=> b.ganho - a.ganho);
+    return ordenado.slice(0, MOSTRAR_TOP);
+  }
+
+  function render(){
+    const lista = topAtual();
+    let html = '';
+    for(let i=0;i<lista.length;i++){
+      const r = lista[i];
+      html += `
+        <tr>
+          <td style="padding:10px;border-bottom:1px solid rgba(255,255,255,.06)">${i+1}</td>
+          <td style="padding:10px;border-bottom:1px solid rgba(255,255,255,.06);font-weight:700">${r.id}</td>
+          <td style="padding:10px;border-bottom:1px solid rgba(255,255,255,.06);text-align:right;color:#22c55e">${dinheiro(r.ganho)}</td>
+          <td style="padding:10px;border-bottom:1px solid rgba(255,255,255,.06)">${horaCurta(r.updatedAt)}</td>
+        </tr>
+      `;
+    }
+    elBody.innerHTML = html;
+  }
+
+  function abrir(){ elModal.style.display='flex'; render(); }
+  function fechar(){ elModal.style.display='none'; }
+
+  // ===== Eventos do modal =====
+  elOpen.addEventListener('click', (e)=>{ e.preventDefault(); abrir(); });
+  elClose.addEventListener('click', fechar);
+  elModal.addEventListener('click', (e)=>{ if(e.target===elModal) fechar(); });
+
+  // Botão "Atualizar agora" => injeta novas 7 e rerender
+  elBtnRefresh?.addEventListener('click', ()=>{
+    injetarNovas(INJETAR_CADA_REFRESH);
+    render();
+  });
+
+  // ===== Inicialização =====
+  gerarInicial();
+  render();
+
+  // Atualizações programadas (a cada 2 horas) — injeta +7
+  setInterval(()=>{
+    injetarNovas(INJETAR_CADA_REFRESH);
+    // só re-renderiza se o modal estiver aberto
+    if (elModal.style.display === 'flex') render();
+  }, ATUALIZAR_MS);
+
+})();
+</script>
+
 
 </body>
 </html>
+
